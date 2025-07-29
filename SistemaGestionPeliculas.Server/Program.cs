@@ -33,7 +33,6 @@ builder.Services.AddDbContext<PeliculasContext>(options =>
     options.UseSqlite("Data Source=peliculas.db"));
 
 // 🔧 Servicios adicionales
-builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddCors(options =>
 {
@@ -47,24 +46,24 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// 🌱 Semilla de datos inicial
+// 🧪 Inicialización de datos
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<PeliculasContext>();
     DbSeeder.SeedPeliculas(context);
 
-    // Asignar admin a un usuario específico (pon el email que quieres)
+    // Asignar admin a un usuario específico
     DbSeeder.SetUsuarioAdmin(context, "facundolafflitto@yahoo.com.ar");
 }
 
 // 🚀 Middleware
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    //error
 }
 
 app.UseCors();
-app.UseAuthentication(); // 👈 Importante: va antes de Authorization
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
