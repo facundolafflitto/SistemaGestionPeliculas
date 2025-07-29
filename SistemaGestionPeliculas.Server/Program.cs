@@ -70,7 +70,7 @@ using (var scope = app.Services.CreateScope())
     {
         var context = scope.ServiceProvider.GetRequiredService<PeliculasContext>();
         DbSeeder.SeedPeliculas(context);
-        DbSeeder.SetUsuarioAdmin(context, "facundolafflitto@yahoo.com.ar");
+        DbSeeder.SetUsuarioAdmin(context, "herber7748@hotmail.com");
     }
     catch (Exception ex)
     {

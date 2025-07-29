@@ -12,10 +12,12 @@ namespace SistemaGestionPeliculas.Server.Controllers
     public class PeliculasController : ControllerBase
     {
         private readonly PeliculasContext _context;
+        private readonly IConfiguration _config;
 
-        public PeliculasController(PeliculasContext context)
+        public PeliculasController(PeliculasContext context, IConfiguration config)
         {
             _context = context;
+            _config = config;
         }
 
         [HttpGet]
@@ -66,7 +68,7 @@ namespace SistemaGestionPeliculas.Server.Controllers
         [HttpGet("buscar-omdb")]
         public async Task<IActionResult> BuscarOMDb([FromQuery] string titulo)
         {
-            string apiKey = "b1749c67";
+            string apiKey = _config["OMDb:ApiKey"] ?? "";
             string url = $"http://www.omdbapi.com/?t={Uri.EscapeDataString(titulo)}&apikey={apiKey}";
 
             using var httpClient = new HttpClient();
@@ -81,7 +83,6 @@ namespace SistemaGestionPeliculas.Server.Controllers
             if (data["Response"]?.ToString() != "True")
                 return NotFound("Película no encontrada en OMDb.");
 
-            // Convertir año a int (si no es válido, queda 0)
             int anio = 0;
             int.TryParse(data["Year"]?.ToString(), out anio);
 
@@ -97,75 +98,70 @@ namespace SistemaGestionPeliculas.Server.Controllers
         }
 
         // Nuevo endpoint para tráiler y sinopsis desde TMDb
-[HttpGet("trailer-tmdb")]
-public async Task<IActionResult> GetTrailerTMDb([FromQuery] string titulo)
-{
-    string apiKey = "63b5cc9831401c5eb7ed475b2eefda79";
-    using var httpClient = new HttpClient();
+        [HttpGet("trailer-tmdb")]
+        public async Task<IActionResult> GetTrailerTMDb([FromQuery] string titulo)
+        {
+            string apiKey = _config["TMDb:ApiKey"] ?? "";
+            using var httpClient = new HttpClient();
 
-    // Buscar por título en español y en inglés si hace falta
-    var searchUrlES = $"https://api.themoviedb.org/3/search/movie?api_key={apiKey}&language=es-ES&query={Uri.EscapeDataString(titulo)}";
-    var searchResp = await httpClient.GetAsync(searchUrlES);
-    var searchJson = await searchResp.Content.ReadAsStringAsync();
-    var searchData = JObject.Parse(searchJson);
+            var searchUrlES = $"https://api.themoviedb.org/3/search/movie?api_key={apiKey}&language=es-ES&query={Uri.EscapeDataString(titulo)}";
+            var searchResp = await httpClient.GetAsync(searchUrlES);
+            var searchJson = await searchResp.Content.ReadAsStringAsync();
+            var searchData = JObject.Parse(searchJson);
 
-    var firstMovie = searchData["results"]?.FirstOrDefault();
-    if (firstMovie == null)
-    {
-        // Buscar en inglés si no encuentra
-        var searchUrlEN = $"https://api.themoviedb.org/3/search/movie?api_key={apiKey}&language=en-US&query={Uri.EscapeDataString(titulo)}";
-        var searchRespEN = await httpClient.GetAsync(searchUrlEN);
-        var searchJsonEN = await searchRespEN.Content.ReadAsStringAsync();
-        var searchDataEN = JObject.Parse(searchJsonEN);
+            var firstMovie = searchData["results"]?.FirstOrDefault();
+            if (firstMovie == null)
+            {
+                var searchUrlEN = $"https://api.themoviedb.org/3/search/movie?api_key={apiKey}&language=en-US&query={Uri.EscapeDataString(titulo)}";
+                var searchRespEN = await httpClient.GetAsync(searchUrlEN);
+                var searchJsonEN = await searchRespEN.Content.ReadAsStringAsync();
+                var searchDataEN = JObject.Parse(searchJsonEN);
 
-        firstMovie = searchDataEN["results"]?.FirstOrDefault();
-        if (firstMovie == null)
-            return NotFound("Película no encontrada en TMDb.");
-    }
+                firstMovie = searchDataEN["results"]?.FirstOrDefault();
+                if (firstMovie == null)
+                    return NotFound("Película no encontrada en TMDb.");
+            }
 
-    var movieId = firstMovie["id"].ToString();
+            var movieId = firstMovie["id"].ToString();
 
-    // Sinopsis
-    var sinopsis = firstMovie["overview"]?.ToString() ?? "";
-    if (string.IsNullOrWhiteSpace(sinopsis))
-    {
-        var movieInfoUrlEN = $"https://api.themoviedb.org/3/movie/{movieId}?api_key={apiKey}&language=en-US";
-        var movieInfoRespEN = await httpClient.GetAsync(movieInfoUrlEN);
-        var movieInfoJsonEN = await movieInfoRespEN.Content.ReadAsStringAsync();
-        var movieDataEN = JObject.Parse(movieInfoJsonEN);
-        sinopsis = movieDataEN["overview"]?.ToString() ?? "Sin sinopsis.";
-    }
+            var sinopsis = firstMovie["overview"]?.ToString() ?? "";
+            if (string.IsNullOrWhiteSpace(sinopsis))
+            {
+                var movieInfoUrlEN = $"https://api.themoviedb.org/3/movie/{movieId}?api_key={apiKey}&language=en-US";
+                var movieInfoRespEN = await httpClient.GetAsync(movieInfoUrlEN);
+                var movieInfoJsonEN = await movieInfoRespEN.Content.ReadAsStringAsync();
+                var movieDataEN = JObject.Parse(movieInfoJsonEN);
+                sinopsis = movieDataEN["overview"]?.ToString() ?? "Sin sinopsis.";
+            }
 
-    // Calificación global TMDb
-    var tmdbRating = firstMovie["vote_average"]?.ToString() ?? "";
-    var tmdbVotes = firstMovie["vote_count"]?.ToString() ?? "";
+            var tmdbRating = firstMovie["vote_average"]?.ToString() ?? "";
+            var tmdbVotes = firstMovie["vote_count"]?.ToString() ?? "";
 
-    // Videos
-    var videosUrl = $"https://api.themoviedb.org/3/movie/{movieId}/videos?api_key={apiKey}";
-    var videosResp = await httpClient.GetAsync(videosUrl);
-    var videosJson = await videosResp.Content.ReadAsStringAsync();
-    var videosData = JObject.Parse(videosJson);
+            var videosUrl = $"https://api.themoviedb.org/3/movie/{movieId}/videos?api_key={apiKey}";
+            var videosResp = await httpClient.GetAsync(videosUrl);
+            var videosJson = await videosResp.Content.ReadAsStringAsync();
+            var videosData = JObject.Parse(videosJson);
 
-    var videos = videosData["results"];
-    var trailer = videos?.FirstOrDefault(v =>
-        v["site"]?.ToString() == "YouTube" &&
-        (
-            v["type"]?.ToString().ToLower().Contains("trailer") == true ||
-            v["type"]?.ToString().ToLower().Contains("teaser") == true ||
-            v["type"]?.ToString().ToLower().Contains("clip") == true
-        )
-    );
-    if (trailer == null)
-        trailer = videos?.FirstOrDefault(v => v["site"]?.ToString() == "YouTube");
+            var videos = videosData["results"];
+            var trailer = videos?.FirstOrDefault(v =>
+                v["site"]?.ToString() == "YouTube" &&
+                (
+                    v["type"]?.ToString().ToLower().Contains("trailer") == true ||
+                    v["type"]?.ToString().ToLower().Contains("teaser") == true ||
+                    v["type"]?.ToString().ToLower().Contains("clip") == true
+                )
+            );
+            if (trailer == null)
+                trailer = videos?.FirstOrDefault(v => v["site"]?.ToString() == "YouTube");
 
-    string youtubeUrl = null;
-    if (trailer != null)
-    {
-        var youtubeKey = trailer["key"]?.ToString();
-        youtubeUrl = $"https://www.youtube.com/watch?v={youtubeKey}";
-    }
+            string youtubeUrl = null;
+            if (trailer != null)
+            {
+                var youtubeKey = trailer["key"]?.ToString();
+                youtubeUrl = $"https://www.youtube.com/watch?v={youtubeKey}";
+            }
 
-    return Ok(new { youtubeUrl, sinopsis, tmdbRating, tmdbVotes });
-}
+            return Ok(new { youtubeUrl, sinopsis, tmdbRating, tmdbVotes });
+        }
     }
 }

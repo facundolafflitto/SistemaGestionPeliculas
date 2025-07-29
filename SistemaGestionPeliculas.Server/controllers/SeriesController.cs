@@ -12,10 +12,12 @@ namespace SistemaGestionPeliculas.Server.Controllers
     public class SeriesController : ControllerBase
     {
         private readonly PeliculasContext _context;
+        private readonly IConfiguration _config;
 
-        public SeriesController(PeliculasContext context)
+        public SeriesController(PeliculasContext context, IConfiguration config)
         {
             _context = context;
+            _config = config;
         }
 
         [HttpGet]
@@ -66,10 +68,9 @@ namespace SistemaGestionPeliculas.Server.Controllers
         [HttpGet("trailer-tmdb")]
         public async Task<IActionResult> GetTrailerTMDb([FromQuery] string titulo)
         {
-            string apiKey = "63b5cc9831401c5eb7ed475b2eefda79"; // <-- Poné tu key real acá
+            string apiKey = _config["TMDb:ApiKey"] ?? "";
             using var httpClient = new HttpClient();
 
-            // Buscar serie por título en español, después en inglés
             var searchUrlES = $"https://api.themoviedb.org/3/search/tv?api_key={apiKey}&language=es-ES&query={Uri.EscapeDataString(titulo)}";
             var searchResp = await httpClient.GetAsync(searchUrlES);
             var searchJson = await searchResp.Content.ReadAsStringAsync();
@@ -93,7 +94,6 @@ namespace SistemaGestionPeliculas.Server.Controllers
             var tmdbRating = firstSerie["vote_average"]?.ToString() ?? "";
             var tmdbVotes = firstSerie["vote_count"]?.ToString() ?? "";
 
-            // Buscar videos (tráiler)
             var videosUrl = $"https://api.themoviedb.org/3/tv/{serieId}/videos?api_key={apiKey}";
             var videosResp = await httpClient.GetAsync(videosUrl);
             var videosJson = await videosResp.Content.ReadAsStringAsync();
@@ -121,62 +121,61 @@ namespace SistemaGestionPeliculas.Server.Controllers
             return Ok(new { youtubeUrl, sinopsis, tmdbRating, tmdbVotes });
         }
 
-[HttpGet("tmdb-detalle")]
-public async Task<IActionResult> ObtenerDetalleSerie([FromQuery] string titulo)
-{
-    string apiKey = "63b5cc9831401c5eb7ed475b2eefda79";
-    using var httpClient = new HttpClient();
-    // Buscar el ID de la serie
-    var searchUrl = $"https://api.themoviedb.org/3/search/tv?api_key={apiKey}&language=es-ES&query={Uri.EscapeDataString(titulo)}";
-    var searchResp = await httpClient.GetAsync(searchUrl);
-    var searchJson = await searchResp.Content.ReadAsStringAsync();
-    var searchData = JObject.Parse(searchJson);
+        [HttpGet("tmdb-detalle")]
+        public async Task<IActionResult> ObtenerDetalleSerie([FromQuery] string titulo)
+        {
+            string apiKey = _config["TMDb:ApiKey"] ?? "";
+            using var httpClient = new HttpClient();
 
-    var firstSerie = searchData["results"]?.FirstOrDefault();
-    if (firstSerie == null)
-        return NotFound("Serie no encontrada en TMDb");
+            var searchUrl = $"https://api.themoviedb.org/3/search/tv?api_key={apiKey}&language=es-ES&query={Uri.EscapeDataString(titulo)}";
+            var searchResp = await httpClient.GetAsync(searchUrl);
+            var searchJson = await searchResp.Content.ReadAsStringAsync();
+            var searchData = JObject.Parse(searchJson);
 
-    var seriesId = firstSerie["id"].ToString();
+            var firstSerie = searchData["results"]?.FirstOrDefault();
+            if (firstSerie == null)
+                return NotFound("Serie no encontrada en TMDb");
 
-    // Traer detalle de la serie con temporadas
-    var detalleUrl = $"https://api.themoviedb.org/3/tv/{seriesId}?api_key={apiKey}&language=es-ES";
-    var detalleResp = await httpClient.GetAsync(detalleUrl);
-    var detalleJson = await detalleResp.Content.ReadAsStringAsync();
-    var detalleData = JObject.Parse(detalleJson);
+            var seriesId = firstSerie["id"].ToString();
 
-    // Traer info de cada temporada y episodio
-    var temporadas = new List<object>();
-    foreach (var temporada in detalleData["seasons"])
-    {
-        int seasonNumber = temporada["season_number"].Value<int>();
-        var temporadaUrl = $"https://api.themoviedb.org/3/tv/{seriesId}/season/{seasonNumber}?api_key={apiKey}&language=es-ES";
-        var tempResp = await httpClient.GetAsync(temporadaUrl);
-        var tempJson = await tempResp.Content.ReadAsStringAsync();
-        var tempData = JObject.Parse(tempJson);
+            var detalleUrl = $"https://api.themoviedb.org/3/tv/{seriesId}?api_key={apiKey}&language=es-ES";
+            var detalleResp = await httpClient.GetAsync(detalleUrl);
+            var detalleJson = await detalleResp.Content.ReadAsStringAsync();
+            var detalleData = JObject.Parse(detalleJson);
 
-        temporadas.Add(new {
-            numero = tempData["season_number"]?.ToString() ?? "",
-            nombre = tempData["name"]?.ToString() ?? "",
-            overview = tempData["overview"]?.ToString() ?? "",
-            poster = tempData["poster_path"] != null ? "https://image.tmdb.org/t/p/w300" + tempData["poster_path"] : null,
-            episodios = tempData["episodes"].Select(ep => new {
-                numero = ep["episode_number"]?.ToString() ?? "",
-                nombre = ep["name"]?.ToString() ?? "",
-                overview = ep["overview"]?.ToString() ?? "",
-                imagen = ep["still_path"] != null ? "https://image.tmdb.org/t/p/w300" + ep["still_path"] : null,
-                fecha = ep["air_date"]?.ToString() ?? ""
-            }).ToList()
-        });
-    }
+            var temporadas = new List<object>();
+            foreach (var temporada in detalleData["seasons"])
+            {
+                int seasonNumber = temporada["season_number"].Value<int>();
+                var temporadaUrl = $"https://api.themoviedb.org/3/tv/{seriesId}/season/{seasonNumber}?api_key={apiKey}&language=es-ES";
+                var tempResp = await httpClient.GetAsync(temporadaUrl);
+                var tempJson = await tempResp.Content.ReadAsStringAsync();
+                var tempData = JObject.Parse(tempJson);
 
-    return Ok(new {
-        titulo = detalleData["name"]?.ToString() ?? "",
-        overview = detalleData["overview"]?.ToString() ?? "",
-        poster = detalleData["poster_path"] != null ? "https://image.tmdb.org/t/p/w500" + detalleData["poster_path"] : null,
-        temporadas
-    });
-}
+                temporadas.Add(new
+                {
+                    numero = tempData["season_number"]?.ToString() ?? "",
+                    nombre = tempData["name"]?.ToString() ?? "",
+                    overview = tempData["overview"]?.ToString() ?? "",
+                    poster = tempData["poster_path"] != null ? "https://image.tmdb.org/t/p/w300" + tempData["poster_path"] : null,
+                    episodios = tempData["episodes"].Select(ep => new
+                    {
+                        numero = ep["episode_number"]?.ToString() ?? "",
+                        nombre = ep["name"]?.ToString() ?? "",
+                        overview = ep["overview"]?.ToString() ?? "",
+                        imagen = ep["still_path"] != null ? "https://image.tmdb.org/t/p/w300" + ep["still_path"] : null,
+                        fecha = ep["air_date"]?.ToString() ?? ""
+                    }).ToList()
+                });
+            }
 
-
+            return Ok(new
+            {
+                titulo = detalleData["name"]?.ToString() ?? "",
+                overview = detalleData["overview"]?.ToString() ?? "",
+                poster = detalleData["poster_path"] != null ? "https://image.tmdb.org/t/p/w500" + detalleData["poster_path"] : null,
+                temporadas
+            });
+        }
     }
 }
