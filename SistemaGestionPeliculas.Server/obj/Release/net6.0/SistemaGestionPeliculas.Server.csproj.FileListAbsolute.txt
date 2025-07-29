@@ -1,11 +1,6 @@
-C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\obj\Release\net6.0\SistemaGestionPeliculas.Server.csproj.AssemblyReference.cache
-C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\obj\Release\net6.0\SistemaGestionPeliculas.Server.GeneratedMSBuildEditorConfig.editorconfig
-C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\obj\Release\net6.0\SistemaGestionPeliculas.Server.AssemblyInfoInputs.cache
-C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\obj\Release\net6.0\SistemaGestionPeliculas.Server.AssemblyInfo.cs
-C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\obj\Release\net6.0\SistemaGestionPeliculas.Server.csproj.CoreCompileInputs.cache
-C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\obj\Release\net6.0\SistemaGestionPeliculas.Server.MvcApplicationPartsAssemblyInfo.cache
 C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\bin\Release\net6.0\appsettings.Development.json
 C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\bin\Release\net6.0\appsettings.json
+C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\bin\Release\net6.0\peliculas.db
 C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\bin\Release\net6.0\SistemaGestionPeliculas.Server.exe
 C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\bin\Release\net6.0\SistemaGestionPeliculas.Server.deps.json
 C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\bin\Release\net6.0\SistemaGestionPeliculas.Server.runtimeconfig.json
@@ -82,6 +77,12 @@ C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\bin\Release\
 C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\bin\Release\net6.0\SistemaGestionPeliculas_TransferObject.dll
 C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\bin\Release\net6.0\SistemaGestionPeliculas_Data.pdb
 C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\bin\Release\net6.0\SistemaGestionPeliculas_TransferObject.pdb
+C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\obj\Release\net6.0\SistemaGestionPeliculas.Server.csproj.AssemblyReference.cache
+C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\obj\Release\net6.0\SistemaGestionPeliculas.Server.GeneratedMSBuildEditorConfig.editorconfig
+C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\obj\Release\net6.0\SistemaGestionPeliculas.Server.AssemblyInfoInputs.cache
+C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\obj\Release\net6.0\SistemaGestionPeliculas.Server.AssemblyInfo.cs
+C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\obj\Release\net6.0\SistemaGestionPeliculas.Server.csproj.CoreCompileInputs.cache
+C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\obj\Release\net6.0\SistemaGestionPeliculas.Server.MvcApplicationPartsAssemblyInfo.cache
 C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\obj\Release\net6.0\staticwebassets.build.json
 C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\obj\Release\net6.0\staticwebassets.development.json
 C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\obj\Release\net6.0\scopedcss\bundle\SistemaGestionPeliculas.Server.styles.css
