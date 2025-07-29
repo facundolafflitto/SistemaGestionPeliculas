@@ -69,5 +69,7 @@ app.UseCors("AllowFrontend"); // 👈 se aplica la política CORS por nombre
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapGet("/", () => "API funcionando 🚀");
+
 
 app.Run();
