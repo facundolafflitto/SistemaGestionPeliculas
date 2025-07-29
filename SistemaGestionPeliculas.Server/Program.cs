@@ -41,13 +41,14 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(policy =>
     {
         policy.WithOrigins(
-            "https://sistema-gestion-peliculas-apg7c8fm5-facundos-projects-26cddd25.vercel.app", // Vercel
+            "https://sistema-gestion-peliculas.vercel.app", // dominio de Vercel que me pasaste
             "http://localhost:5173" // para desarrollo local
         )
         .AllowAnyHeader()
         .AllowAnyMethod();
     });
 });
+
 
 // 👂 Railway espera que escuchemos en el puerto proporcionado
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
