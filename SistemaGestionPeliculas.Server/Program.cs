@@ -8,7 +8,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔐 Configuración JWT desde variables de entorno
+// 🔐 JWT Config desde variables de entorno
 var jwtKey = builder.Configuration["Jwt:Key"];
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
 var jwtAudience = builder.Configuration["Jwt:Audience"];
@@ -28,35 +28,35 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// 💾 DB Context con SQLite
+// 💾 Configuración de EF Core con SQLite
 builder.Services.AddDbContext<PeliculasContext>(options =>
     options.UseSqlite("Data Source=peliculas.db"));
 
-// 🔧 Servicios adicionales
+// 🔧 Servicios y controladores
 builder.Services.AddControllers();
 
-// 🌐 CORS para frontend en Vercel + localhost
+// 🌐 CORS: permite origenes específicos (Vercel y localhost para desarrollo)
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
+    options.AddPolicy("AllowFrontend", policy =>
     {
         policy.WithOrigins(
-            "https://sistema-gestion-peliculas.vercel.app", // dominio de Vercel que me pasaste
-            "http://localhost:5173" // para desarrollo local
+            "https://sistema-gestion-peliculas.vercel.app",
+            "http://localhost:5173"
         )
         .AllowAnyHeader()
         .AllowAnyMethod();
+        // Si usás cookies, también agregar: .AllowCredentials();
     });
 });
 
-
-// 👂 Railway espera que escuchemos en el puerto proporcionado
+// 👂 Railway espera un puerto dinámico
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
 builder.WebHost.UseUrls($"http://*:{port}");
 
 var app = builder.Build();
 
-// 🧪 Inicialización de datos
+// 🧪 Seeding inicial de la base de datos
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<PeliculasContext>();
@@ -65,7 +65,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 // 🚀 Middleware
-app.UseCors();
+app.UseCors("AllowFrontend"); // 👈 se aplica la política CORS por nombre
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
