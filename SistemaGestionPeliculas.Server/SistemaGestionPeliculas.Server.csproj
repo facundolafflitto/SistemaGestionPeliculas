@@ -24,9 +24,14 @@
   </ItemGroup>
 
   <ItemGroup>
-  <None Update="peliculas.db">
-    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-  </None>
-</ItemGroup>
+    <None Update="peliculas.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <!-- Fuerza la inclusión de todos los controllers -->
+  <ItemGroup>
+    <Compile Include="Controllers\*.cs" />
+  </ItemGroup>
 
 </Project>

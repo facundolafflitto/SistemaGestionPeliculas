@@ -92,3 +92,8 @@ C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\obj\Release\
 C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\obj\Release\net6.0\SistemaGestionPeliculas.Server.pdb
 C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\obj\Release\net6.0\SistemaGestionPeliculas.Server.genruntimeconfig.cache
 C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\obj\Release\net6.0\ref\SistemaGestionPeliculas.Server.dll
+C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\bin\Release\net6.0\out\web.config
+C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\bin\Release\net6.0\out\appsettings.Development.json
+C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\bin\Release\net6.0\out\appsettings.json
+C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\bin\Release\net6.0\out\SistemaGestionPeliculas.Server.deps.json
+C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\bin\Release\net6.0\out\SistemaGestionPeliculas.Server.runtimeconfig.json

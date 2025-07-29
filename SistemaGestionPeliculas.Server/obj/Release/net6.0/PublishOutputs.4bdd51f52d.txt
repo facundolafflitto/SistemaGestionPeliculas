@@ -1,6 +1,11 @@
 C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\out\SistemaGestionPeliculas.Server.exe
+C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\out\out\web.config
 C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\out\appsettings.Development.json
 C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\out\appsettings.json
+C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\out\out\appsettings.Development.json
+C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\out\out\appsettings.json
+C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\out\out\SistemaGestionPeliculas.Server.deps.json
+C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\out\out\SistemaGestionPeliculas.Server.runtimeconfig.json
 C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\out\peliculas.db
 C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\out\SistemaGestionPeliculas.Server.dll
 C:\Projectos\SistemaGestionPeliculas\SistemaGestionPeliculas.Server\out\SistemaGestionPeliculas.Server.runtimeconfig.json
