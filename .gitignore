@@ -1,0 +1,4 @@
+# Ignorar base de datos SQLite
+*.db
+*.db-shm
+*.db-wal
