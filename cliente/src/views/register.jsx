@@ -6,13 +6,15 @@ const Register = ({ onRegisterSuccess }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const handleRegister = (e) => {
     e.preventDefault();
 
-    fetch("http://localhost:5183/api/auth/register", {
+    fetch(`${apiUrl}/api/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ Email: email, Password: password }),
     })
       .then(async (res) => {
         if (!res.ok) {
