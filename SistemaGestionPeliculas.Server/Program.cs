@@ -59,10 +59,19 @@ var app = builder.Build();
 // 🧪 Seeding inicial de la base de datos
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<PeliculasContext>();
-    DbSeeder.SeedPeliculas(context);
-    DbSeeder.SetUsuarioAdmin(context, "facundolafflitto@yahoo.com.ar");
+    try
+    {
+        var context = scope.ServiceProvider.GetRequiredService<PeliculasContext>();
+        DbSeeder.SeedPeliculas(context);
+        DbSeeder.SetUsuarioAdmin(context, "facundolafflitto@yahoo.com.ar");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("=== ERROR EN EL SEEDING ===");
+        Console.WriteLine(ex.ToString());
+    }
 }
+
 
 // 🚀 Middleware
 app.UseCors("AllowFrontend"); // 👈 se aplica la política CORS por nombre
