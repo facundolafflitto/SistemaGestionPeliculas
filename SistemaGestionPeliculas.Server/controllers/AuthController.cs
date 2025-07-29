@@ -16,11 +16,12 @@ namespace SistemaGestionPeliculas.Server.Controllers
         private readonly IConfiguration _config;
         private readonly PeliculasContext _context;
 
-        public AuthController(IConfiguration config, PeliculasContext context)
-        {
-            _config = config;
-            _context = context;
-        }
+public AuthController(IConfiguration config, PeliculasContext context)
+{
+    Console.WriteLine("==== AuthController CARGADO ====");
+    _config = config;
+    _context = context;
+}
 
         // ✅ LOGIN
         [HttpPost("login")]
