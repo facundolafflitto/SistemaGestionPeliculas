@@ -79,7 +79,15 @@ namespace SistemaGestionPeliculas.Server.Controllers
 
             return Ok("Usuario registrado correctamente");
         }
+
+        [HttpGet("ping")]
+public IActionResult Ping()
+{
+    return Ok("pong");
+}
     }
+
+    
 
     // DTOs
     public class LoginRequest
