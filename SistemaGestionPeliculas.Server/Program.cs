@@ -13,6 +13,12 @@ var jwtKey = builder.Configuration["Jwt:Key"];
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
 var jwtAudience = builder.Configuration["Jwt:Audience"];
 
+if (string.IsNullOrEmpty(jwtKey) || string.IsNullOrEmpty(jwtIssuer) || string.IsNullOrEmpty(jwtAudience))
+{
+    Console.WriteLine("=== Faltan variables de entorno para JWT ===");
+    throw new InvalidOperationException("Faltan variables de entorno para JWT");
+}
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -51,9 +57,9 @@ builder.Services.AddCors(options =>
 });
 
 // 👂 Railway espera un puerto dinámico
-var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 Console.WriteLine($"Puerto asignado: {port}");
-builder.WebHost.UseUrls($"http://*:{port}");
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 var app = builder.Build();
 
@@ -73,13 +79,11 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-
 // 🚀 Middleware
-app.UseCors("AllowFrontend"); // 👈 se aplica la política CORS por nombre
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.MapGet("/", () => "API funcionando 🚀");
-
 
 app.Run();
