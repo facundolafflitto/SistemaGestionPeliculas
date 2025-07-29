@@ -8,7 +8,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔐 Configuración JWT
+// 🔐 Configuración JWT desde variables de entorno (Railway las provee)
 var jwtKey = builder.Configuration["Jwt:Key"];
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
 var jwtAudience = builder.Configuration["Jwt:Audience"];
@@ -38,7 +38,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
+        policy.WithOrigins("http://localhost:5173") // Podés cambiarlo a tu frontend en producción
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -57,14 +57,14 @@ using (var scope = app.Services.CreateScope())
 }
 
 // 🚀 Middleware
-if (app.Environment.IsDevelopment())
-{
-    //error
-}
-
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// 🛠️ Railway espera que escuchemos en el puerto definido por $PORT
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+app.Urls.Add($"http://*:{port}");
+
 app.Run();
