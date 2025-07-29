@@ -8,7 +8,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔐 JWT Config desde variables de entorno
+// 🔐Config desde variables de entorno
 var jwtKey = builder.Configuration["Jwt:Key"];
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
 var jwtAudience = builder.Configuration["Jwt:Audience"];
@@ -34,14 +34,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// 💾 Configuración de EF Core con SQLite
+//Configuración de EF Core con SQLite
 builder.Services.AddDbContext<PeliculasContext>(options =>
     options.UseSqlite("Data Source=peliculas.db"));
 
 // 🔧 Servicios y controladores
 builder.Services.AddControllers();
 
-// 🌐 CORS: permite origenes específicos (Vercel y localhost para desarrollo)
+//CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -56,14 +56,14 @@ builder.Services.AddCors(options =>
     });
 });
 
-// 👂 Railway espera un puerto dinámico
+// Railway espera un puerto dinámico
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 Console.WriteLine($"Puerto asignado: {port}");
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 var app = builder.Build();
 
-// 🧪 Seeding inicial de la base de datos
+// Seeding inicial de la base de datos
 using (var scope = app.Services.CreateScope())
 {
     try
@@ -79,7 +79,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// 🚀 Middleware
+// Middleware
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
