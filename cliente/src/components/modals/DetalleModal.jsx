@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const DetalleModal = ({ pelicula, onClose }) => {
   const fondoRef = useRef();
   const [trailerUrl, setTrailerUrl] = useState("");
@@ -22,7 +24,7 @@ const DetalleModal = ({ pelicula, onClose }) => {
     if (e.target === fondoRef.current) onClose();
   };
 
-  // Carga datos de TMDb
+  // 🔄 Cargar datos desde TMDb usando la API del backend
   useEffect(() => {
     if (!pelicula) return;
     setCargando(true);
@@ -30,15 +32,21 @@ const DetalleModal = ({ pelicula, onClose }) => {
     setSinopsis("");
     setTmdbRating("");
     setTmdbVotes("");
+
     fetch(
-      `http://localhost:5183/api/peliculas/trailer-tmdb?titulo=${encodeURIComponent(
+      `${API_URL}/api/peliculas/trailer-tmdb?titulo=${encodeURIComponent(
         pelicula.titulo
       )}`
     )
       .then((res) =>
         res.ok
           ? res.json()
-          : { youtubeUrl: "", sinopsis: "Sin información.", tmdbRating: "", tmdbVotes: "" }
+          : {
+              youtubeUrl: "",
+              sinopsis: "Sin información.",
+              tmdbRating: "",
+              tmdbVotes: "",
+            }
       )
       .then((data) => {
         setTrailerUrl(data.youtubeUrl || "");
@@ -85,17 +93,16 @@ const DetalleModal = ({ pelicula, onClose }) => {
 
         <div className="mb-2">
           <span className="font-bold">Calificación mundial: </span>
-          {tmdbRating
-            ? (
-              <>
-                <span className="text-yellow-500 font-bold">{tmdbRating}</span>
-                <span className="text-gray-400 text-sm ml-2">
-                  ({tmdbVotes} votos)
-                </span>
-              </>
-            )
-            : <span className="text-gray-400">Sin calificación.</span>
-          }
+          {tmdbRating ? (
+            <>
+              <span className="text-yellow-500 font-bold">{tmdbRating}</span>
+              <span className="text-gray-400 text-sm ml-2">
+                ({tmdbVotes} votos)
+              </span>
+            </>
+          ) : (
+            <span className="text-gray-400">Sin calificación.</span>
+          )}
         </div>
 
         <div className="mb-2">
@@ -106,6 +113,7 @@ const DetalleModal = ({ pelicula, onClose }) => {
             <span>{sinopsis}</span>
           )}
         </div>
+
         <div className="mb-2">
           <span className="font-bold">Tráiler: </span>
           {cargando ? (

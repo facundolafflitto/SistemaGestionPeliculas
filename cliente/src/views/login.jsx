@@ -1,15 +1,17 @@
 import React, { useState } from "react";
-import { jwtDecode } from "jwt-decode"; 
+import { jwtDecode } from "jwt-decode";
 
 const Login = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const handleLogin = (e) => {
     e.preventDefault();
 
-    fetch("http://localhost:5183/api/auth/login", {
+    fetch(`${apiUrl}/api/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -23,12 +25,13 @@ const Login = ({ onLoginSuccess }) => {
       })
       .then((data) => {
         localStorage.setItem("token", data.token);
-        // Decodea el token y guarda el rol
         const decoded = jwtDecode(data.token);
+
         const rol =
           decoded["role"] ||
           decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] ||
           "";
+
         localStorage.setItem("rol", rol);
         onLoginSuccess();
       })

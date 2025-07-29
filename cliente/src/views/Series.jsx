@@ -4,6 +4,8 @@ import FormularioPelicula from "../components/forms/FormularioPelicula";
 import DetalleModalSerie from "../components/modals/DetalleModalSerie";
 import { motion, AnimatePresence } from "framer-motion";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const Series = ({ onLogout }) => {
   const [series, setSeries] = useState([]);
   const [cargando, setCargando] = useState(true);
@@ -28,7 +30,7 @@ const Series = ({ onLogout }) => {
   }, []);
 
   const fetchSeries = () => {
-    fetch("http://localhost:5183/api/series", {
+    fetch(`${API_URL}/api/series`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then((res) => {
@@ -45,7 +47,7 @@ const Series = ({ onLogout }) => {
 
   const eliminarSerie = (id) => {
     if (!window.confirm("¿Estás seguro que deseas eliminar esta serie?")) return;
-    fetch(`http://localhost:5183/api/series/${id}`, {
+    fetch(`${API_URL}/api/series/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` }
     })
@@ -80,8 +82,8 @@ const Series = ({ onLogout }) => {
 
   const guardarCambios = () => {
     const url = serie.id
-      ? `http://localhost:5183/api/series/${serie.id}`
-      : "http://localhost:5183/api/series";
+      ? `${API_URL}/api/series/${serie.id}`
+      : `${API_URL}/api/series`;
     const method = serie.id ? "PUT" : "POST";
 
     fetch(url, {
@@ -100,14 +102,13 @@ const Series = ({ onLogout }) => {
           const contentType = res.headers.get("content-type");
           if (res.status === 401) throw new Error("No autorizado");
 
-if (res.status === 400 && contentType?.includes("application/json")) {
-  const errorJson = await res.json();
-  const errores = errorJson.errors
-    ? Object.values(errorJson.errors).flat()
-    : [errorJson.title || "Error de validación"];
-  throw new Error(errores.join("\n"));
-}
-
+          if (res.status === 400 && contentType?.includes("application/json")) {
+            const errorJson = await res.json();
+            const errores = errorJson.errors
+              ? Object.values(errorJson.errors).flat()
+              : [errorJson.title || "Error de validación"];
+            throw new Error(errores.join("\n"));
+          }
 
           const text = await res.text();
           throw new Error(text || "Error al guardar");
@@ -291,11 +292,11 @@ if (res.status === 400 && contentType?.includes("application/json")) {
               >
                 ×
               </button>
-{erroresFormulario && (
-  <div className="mb-4 text-red-500 text-sm whitespace-pre-line">
-    {erroresFormulario}
-  </div>
-)}
+              {erroresFormulario && (
+                <div className="mb-4 text-red-500 text-sm whitespace-pre-line">
+                  {erroresFormulario}
+                </div>
+              )}
               <FormularioPelicula
                 pelicula={serie}
                 setPelicula={setSerie}

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const FormularioPelicula = ({
   pelicula,
   setPelicula,
@@ -40,7 +42,7 @@ const FormularioPelicula = ({
     }
     try {
       const resp = await fetch(
-        `http://localhost:5183/api/peliculas/buscar-omdb?titulo=${encodeURIComponent(
+        `${API_URL}/api/peliculas/buscar-omdb?titulo=${encodeURIComponent(
           pelicula.titulo
         )}`
       );

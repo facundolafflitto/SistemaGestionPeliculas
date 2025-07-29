@@ -16,23 +16,25 @@ const Peliculas = ({ onLogout }) => {
     año: "",
     imagenUrl: ""
   });
-
   const [peliculaDetalle, setPeliculaDetalle] = useState(null);
+  const [erroresFormulario, setErroresFormulario] = useState("");
+  const [filtroGenero, setFiltroGenero] = useState("");
 
+  const apiUrl = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token");
   const rol = localStorage.getItem("rol") || "";
   const esAdmin = rol === "admin";
 
   const fetchPeliculas = () => {
-    fetch("http://localhost:5183/api/peliculas", {
+    fetch(`${apiUrl}/api/peliculas`, {
       headers: { Authorization: `Bearer ${token}` }
     })
-      .then((res) => {
+      .then(res => {
         if (!res.ok) throw new Error("No autorizado");
         return res.json();
       })
-      .then((data) => setPeliculas(data))
-      .catch((err) => {
+      .then(data => setPeliculas(data))
+      .catch(err => {
         console.error(err);
         if (err.message === "No autorizado") onLogout();
       })
@@ -44,18 +46,18 @@ const Peliculas = ({ onLogout }) => {
   }, []);
 
   const eliminarPelicula = (id) => {
-    if (!window.confirm("¿Estás seguro que deseas eliminar esta película?")) return;
-    fetch(`http://localhost:5183/api/peliculas/${id}`, {
+    if (!window.confirm("¿Eliminar esta película?")) return;
+    fetch(`${apiUrl}/api/peliculas/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` }
     })
-      .then((res) => {
-        if (!res.ok) throw new Error("No se pudo eliminar la película");
+      .then(res => {
+        if (!res.ok) throw new Error("No se pudo eliminar");
         fetchPeliculas();
       })
-      .catch((err) => {
+      .catch(err => {
         console.error(err);
-        alert("Error al eliminar. Es posible que la película no exista o no estés autorizado.");
+        alert("Error al eliminar.");
       });
   };
 
@@ -77,60 +79,51 @@ const Peliculas = ({ onLogout }) => {
     setEsEdicion(false);
   };
 
-  const [erroresFormulario, setErroresFormulario] = useState("");
+  const guardarCambios = () => {
+    const url = pelicula.id
+      ? `${apiUrl}/api/peliculas/${pelicula.id}`
+      : `${apiUrl}/api/peliculas`;
+    const method = pelicula.id ? "PUT" : "POST";
 
-
-const guardarCambios = () => {
-  const url = pelicula.id
-    ? `http://localhost:5183/api/peliculas/${pelicula.id}`
-    : "http://localhost:5183/api/peliculas";
-  const method = pelicula.id ? "PUT" : "POST";
-
-  fetch(url, {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify({
-      ...pelicula,
-      año: parseInt(pelicula.año)
+    fetch(url, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ ...pelicula, año: parseInt(pelicula.año) })
     })
-  })
-    .then(async (res) => {
-      if (!res.ok) {
-        const contentType = res.headers.get("content-type");
-        if (res.status === 401) throw new Error("No autorizado");
+      .then(async res => {
+        if (!res.ok) {
+          const contentType = res.headers.get("content-type");
+          if (res.status === 401) throw new Error("No autorizado");
 
-        if (res.status === 400 && contentType?.includes("application/json")) {
-          const errorJson = await res.json();
-          const errores = errorJson.errors
-            ? Object.values(errorJson.errors).flat().join("\n")
-            : errorJson.title || "Error de validación";
-          setErroresFormulario(errores);
-          throw new Error(errores);
+          if (res.status === 400 && contentType?.includes("application/json")) {
+            const errorJson = await res.json();
+            const errores = errorJson.errors
+              ? Object.values(errorJson.errors).flat().join("\n")
+              : errorJson.title || "Error de validación";
+            setErroresFormulario(errores);
+            throw new Error(errores);
+          }
+
+          const text = await res.text();
+          setErroresFormulario(text);
+          throw new Error(text || "Error al guardar");
         }
 
-        const text = await res.text();
-        setErroresFormulario(text);
-        throw new Error(text || "Error al guardar");
-      }
-
-      return res.json();
-    })
-    .then(() => {
-      fetchPeliculas();
-      cancelarEdicion();
-      setErroresFormulario(""); 
-    })
-    .catch((err) => {
-      console.error(err);
-      if (err.message === "No autorizado") {
-        onLogout();
-      }
-    });
-};
-
+        return res.json();
+      })
+      .then(() => {
+        fetchPeliculas();
+        cancelarEdicion();
+        setErroresFormulario("");
+      })
+      .catch(err => {
+        console.error(err);
+        if (err.message === "No autorizado") onLogout();
+      });
+  };
 
   const toggleDarkMode = () => {
     document.documentElement.classList.toggle("dark");
@@ -146,108 +139,75 @@ const guardarCambios = () => {
   }, []);
 
   const mapaGeneros = {
-    "Action": "Acción",
-    "Drama": "Drama",
-    "Comedy": "Comedia",
-    "Thriller": "Suspenso",
-    "Horror": "Terror",
-    "Romance": "Romance",
-    "Adventure": "Aventura",
+    Action: "Acción",
+    Drama: "Drama",
+    Comedy: "Comedia",
+    Thriller: "Suspenso",
+    Horror: "Terror",
+    Romance: "Romance",
+    Adventure: "Aventura",
     "Sci-Fi": "Ciencia ficción",
-    "Fantasy": "Fantasía",
-    "Documentary": "Documental",
-    "Crime": "Crimen",
-    "Mystery": "Misterio",
-    "Animation": "Animación"
-    // Podés agregar más según tu API
+    Fantasy: "Fantasía",
+    Documentary: "Documental",
+    Crime: "Crimen",
+    Mystery: "Misterio",
+    Animation: "Animación"
   };
 
-  const [filtroGenero, setFiltroGenero] = useState("");
-
-  // 🧹 Generar lista única de géneros traducidos
   const generosUnicos = [
     ...new Set(
       peliculas.flatMap(p =>
-        p.genero
-          ? p.genero.split(",").map(g =>
-              mapaGeneros[g.trim()] || g.trim()
-            )
-          : []
+        p.genero ? p.genero.split(",").map(g => mapaGeneros[g.trim()] || g.trim()) : []
       )
     )
-  ].filter(g => g);
+  ];
 
-  // 🔍 Aplicar filtro por género traducido
-  const peliculasFiltradas = peliculas.filter((p) => {
-    const generosDePelicula = p.genero
-      ? p.genero.split(",").map(g =>
-          mapaGeneros[g.trim()] || g.trim()
-        )
+  const peliculasFiltradas = peliculas.filter(p => {
+    const generos = p.genero
+      ? p.genero.split(",").map(g => mapaGeneros[g.trim()] || g.trim())
       : [];
-
-    const generoMatch =
-      filtroGenero === "" || generosDePelicula.includes(filtroGenero);
-
     return (
       p.titulo.toLowerCase().includes(busqueda.toLowerCase()) &&
-      generoMatch
+      (filtroGenero === "" || generos.includes(filtroGenero))
     );
   });
 
   return (
     <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen text-gray-900 dark:text-gray-100 transition-colors">
-      {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
-        <h2 className="text-3xl font-bold flex items-center gap-2">
-          <span role="img" aria-label="clapper">🎬</span>
-          Lista de Películas
-        </h2>
+        <h2 className="text-3xl font-bold flex items-center gap-2">🎬 Lista de Películas</h2>
         <div className="flex gap-2 flex-wrap">
           <input
             type="text"
-            placeholder="Buscar por título..."
+            placeholder="Buscar..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
-            className="p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded text-gray-800 dark:text-gray-100 w-64"
+            className="p-2 border rounded dark:bg-gray-800"
           />
           <select
-            className="p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded text-gray-800 dark:text-gray-100"
             value={filtroGenero}
             onChange={(e) => setFiltroGenero(e.target.value)}
+            className="p-2 border rounded dark:bg-gray-800"
           >
             <option value="">Todos los géneros</option>
-            {generosUnicos.map((g) => (
-              <option key={g} value={g}>
-                {g}
-              </option>
-            ))}
+            {generosUnicos.map(g => <option key={g}>{g}</option>)}
           </select>
           {esAdmin && (
-            <button
-              onClick={abrirModalNueva}
-              className="bg-purple-600 text-white px-4 py-2 rounded shadow hover:bg-purple-700 transition"
-            >
+            <button onClick={abrirModalNueva} className="bg-purple-600 text-white px-4 py-2 rounded">
               + Nueva Película
             </button>
           )}
-          <button
-            onClick={toggleDarkMode}
-            className="px-4 py-2 bg-gray-800 text-white dark:bg-gray-200 dark:text-gray-900 rounded shadow hover:scale-105 transition"
-          >
+          <button onClick={toggleDarkMode} className="px-4 py-2 rounded bg-gray-800 text-white">
             🌙/☀️
           </button>
-          <button
-            onClick={onLogout}
-            className="px-4 py-2 bg-red-600 text-white rounded shadow hover:scale-105 transition"
-          >
+          <button onClick={onLogout} className="bg-red-600 text-white px-4 py-2 rounded">
             Cerrar sesión
           </button>
         </div>
       </div>
 
-      {/* Grilla de películas animadas */}
       {cargando ? (
-        <p className="text-center text-gray-500">Cargando...</p>
+        <p className="text-center">Cargando...</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           <AnimatePresence>
@@ -257,12 +217,8 @@ const guardarCambios = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 30 }}
-                transition={{ duration: 0.38, delay: i * 0.06 }}
-                whileHover={{
-                  scale: 1.04,
-                  boxShadow: "0 8px 32px rgba(80,80,160,0.18)"
-                }}
-                className="rounded shadow bg-gray-800 dark:bg-gray-800 cursor-pointer"
+                transition={{ duration: 0.3, delay: i * 0.05 }}
+                whileHover={{ scale: 1.05 }}
                 onClick={() => setPeliculaDetalle(p)}
               >
                 <PeliculaCard
@@ -277,12 +233,10 @@ const guardarCambios = () => {
         </div>
       )}
 
-      {/* MODAL de detalles */}
       {peliculaDetalle && (
         <DetalleModal pelicula={peliculaDetalle} onClose={() => setPeliculaDetalle(null)} />
       )}
 
-      {/* Modal para crear/editar */}
       <AnimatePresence>
         {modalAbierto && (
           <motion.div
@@ -299,9 +253,8 @@ const guardarCambios = () => {
               className="bg-white dark:bg-gray-800 p-8 rounded shadow-lg max-w-md w-full relative"
             >
               <button
-                className="absolute top-2 right-2 text-xl text-gray-500 hover:text-red-600"
+                className="absolute top-2 right-2 text-xl"
                 onClick={cancelarEdicion}
-                title="Cerrar"
               >
                 ×
               </button>
@@ -311,6 +264,7 @@ const guardarCambios = () => {
                 guardarCambios={guardarCambios}
                 cancelarEdicion={cancelarEdicion}
                 esEdicion={esEdicion}
+                errores={erroresFormulario}
               />
             </motion.div>
           </motion.div>

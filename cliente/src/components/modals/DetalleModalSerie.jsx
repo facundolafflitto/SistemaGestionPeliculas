@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const DetalleModalSerie = ({ serie, onClose }) => {
   const fondoRef = useRef();
   const [detalle, setDetalle] = useState(null);
@@ -38,7 +40,7 @@ const DetalleModalSerie = ({ serie, onClose }) => {
     setError(null);
     setTemporadaIdx(null);
 
-    fetch(`http://localhost:5183/api/series/tmdb-detalle?titulo=${encodeURIComponent(titulo)}`)
+    fetch(`${API_URL}/api/series/tmdb-detalle?titulo=${encodeURIComponent(titulo)}`)
       .then(async (res) => {
         if (!res.ok) {
           const err = await res.text();
@@ -87,7 +89,6 @@ const DetalleModalSerie = ({ serie, onClose }) => {
           </div>
         ) : (
           <>
-            {/* Encabezado */}
             <div className="flex flex-col sm:flex-row gap-6 mb-6 items-start">
               {detalle.poster && (
                 <img
@@ -104,7 +105,6 @@ const DetalleModalSerie = ({ serie, onClose }) => {
                   {detalle.overview || "Sin descripción."}
                 </p>
 
-                {/* Temporadas */}
                 <div className="mt-4">
                   <div className="mb-2 font-semibold text-white">
                     Temporadas:
@@ -142,7 +142,6 @@ const DetalleModalSerie = ({ serie, onClose }) => {
               </div>
             </div>
 
-            {/* Episodios */}
             {temporadaIdx !== null &&
               detalle.temporadas &&
               detalle.temporadas[temporadaIdx] && (

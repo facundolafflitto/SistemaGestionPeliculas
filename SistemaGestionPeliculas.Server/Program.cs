@@ -8,7 +8,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔐 Configuración JWT desde variables de entorno (Railway las provee)
+// 🔐 Configuración JWT desde variables de entorno
 var jwtKey = builder.Configuration["Jwt:Key"];
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
 var jwtAudience = builder.Configuration["Jwt:Audience"];
@@ -34,15 +34,24 @@ builder.Services.AddDbContext<PeliculasContext>(options =>
 
 // 🔧 Servicios adicionales
 builder.Services.AddControllers();
+
+// 🌐 CORS para frontend en Vercel + localhost
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:5173") // Podés cambiarlo a tu frontend en producción
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy.WithOrigins(
+            "https://sistema-gestion-peliculas-apg7c8fm5-facundos-projects-26cddd25.vercel.app", // Vercel
+            "http://localhost:5173" // para desarrollo local
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod();
     });
 });
+
+// 👂 Railway espera que escuchemos en el puerto proporcionado
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+builder.WebHost.UseUrls($"http://*:{port}");
 
 var app = builder.Build();
 
@@ -51,8 +60,6 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<PeliculasContext>();
     DbSeeder.SeedPeliculas(context);
-
-    // Asignar admin a un usuario específico
     DbSeeder.SetUsuarioAdmin(context, "facundolafflitto@yahoo.com.ar");
 }
 
@@ -60,11 +67,6 @@ using (var scope = app.Services.CreateScope())
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
-
-// 🛠️ Railway espera que escuchemos en el puerto definido por $PORT
-var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
-app.Urls.Add($"http://*:{port}");
 
 app.Run();
