@@ -200,9 +200,6 @@ const Peliculas = ({ onLogout }) => {
           <button onClick={toggleDarkMode} className="px-4 py-2 rounded bg-gray-800 text-white">
             🌙/☀️
           </button>
-          <button onClick={onLogout} className="bg-red-600 text-white px-4 py-2 rounded">
-            Cerrar sesión
-          </button>
         </div>
       </div>
 

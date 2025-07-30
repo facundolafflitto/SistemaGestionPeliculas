@@ -223,12 +223,6 @@ const Series = ({ onLogout }) => {
           >
             🌙/☀️
           </button>
-          <button
-            onClick={onLogout}
-            className="px-4 py-2 bg-red-600 text-white rounded shadow hover:scale-105 transition"
-          >
-            Cerrar sesión
-          </button>
         </div>
       </div>
 
