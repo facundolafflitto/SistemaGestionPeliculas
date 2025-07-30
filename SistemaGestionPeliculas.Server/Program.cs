@@ -50,13 +50,14 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
             "https://sistema-gestion-peliculas.vercel.app",
             "https://sistema-gestion-peliculas-tm0oydq53-facundos-projects-26cddd25.vercel.app",
+            "https://sistema-gestion-peliculas-m0rpqptw1-facundos-projects-26cddd25.vercel.app", // ⬅️ Agrega este dominio
             "http://localhost:5173"
         )
         .AllowAnyHeader()
         .AllowAnyMethod();
-        // Si usás cookies o tokens en cookie: .AllowCredentials();
     });
 });
+
 
 // Railway espera un puerto dinámico
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
