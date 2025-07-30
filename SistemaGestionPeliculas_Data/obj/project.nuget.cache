@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "I41f0GoSlIS+SVQArTqAkYLsh9/UwLhdi5FUBZl3MKrK1f5vqjX8fBH7ouABRBp+0LD5wHoKfROwsAEiLtiZMQ==",
+  "dgSpecHash": "/g7sFVt2ESp2X+yyBleBUzX9xPnuJ7nvrBZWEmOn3YytOszbh8TjaKW7WNUoMDXkU8rUCFtT8u/XBuK3uiYobw==",
   "success": true,
   "projectFilePath": "C:\\Projectos\\SistemaGestionPeliculas\\SistemaGestionPeliculas_Data\\SistemaGestionPeliculas_Data.csproj",
   "expectedPackageFiles": [
@@ -36,6 +36,8 @@
     "C:\\Users\\Facundo\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",
     "C:\\Users\\Facundo\\.nuget\\packages\\microsoft.win32.registry\\4.7.0\\microsoft.win32.registry.4.7.0.nupkg.sha512",
     "C:\\Users\\Facundo\\.nuget\\packages\\microsoft.win32.systemevents\\4.7.0\\microsoft.win32.systemevents.4.7.0.nupkg.sha512",
+    "C:\\Users\\Facundo\\.nuget\\packages\\npgsql\\6.0.8\\npgsql.6.0.8.nupkg.sha512",
+    "C:\\Users\\Facundo\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\6.0.8\\npgsql.entityframeworkcore.postgresql.6.0.8.nupkg.sha512",
     "C:\\Users\\Facundo\\.nuget\\packages\\sqlitepclraw.bundle_e_sqlite3\\2.1.2\\sqlitepclraw.bundle_e_sqlite3.2.1.2.nupkg.sha512",
     "C:\\Users\\Facundo\\.nuget\\packages\\sqlitepclraw.core\\2.1.2\\sqlitepclraw.core.2.1.2.nupkg.sha512",
     "C:\\Users\\Facundo\\.nuget\\packages\\sqlitepclraw.lib.e_sqlite3\\2.1.2\\sqlitepclraw.lib.e_sqlite3.2.1.2.nupkg.sha512",

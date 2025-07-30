@@ -35,9 +35,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Configuración de EF Core con SQL Server
+// Configuración de EF Core con PostGreeSQL
 builder.Services.AddDbContext<PeliculasContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Servicios y controladores
 builder.Services.AddControllers();

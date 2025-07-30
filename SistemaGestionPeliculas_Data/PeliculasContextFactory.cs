@@ -8,7 +8,7 @@ namespace SistemaGestionPeliculas_Data
         public PeliculasContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<PeliculasContext>();
-            optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS02;Database=GestionSistemaPeliculas;Trusted_Connection=True;TrustServerCertificate=True;Encrypt=True");
+            optionsBuilder.UseNpgsql("Host=shuttle.proxy.rlwy.net;Port=10147;Database=railway;Username=postgres;Password=YulObGxmUbUkkHAlXHsyeUDiBVQxkObV;SSL Mode=Require;Trust Server Certificate=true");
             return new PeliculasContext(optionsBuilder.Options);
         }
     }
