@@ -59,7 +59,6 @@ builder.Services.AddCors(options =>
 });
 
 
-// Railway espera un puerto dinámico
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 Console.WriteLine($"Puerto asignado: {port}");
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");

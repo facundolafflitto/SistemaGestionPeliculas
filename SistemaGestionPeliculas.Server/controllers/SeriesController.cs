@@ -68,7 +68,7 @@ namespace SistemaGestionPeliculas.Server.Controllers
         [HttpGet("trailer-tmdb")]
         public async Task<IActionResult> GetTrailerTMDb([FromQuery] string titulo)
         {
-            string apiKey = _config["TMDb:ApiKey"] ?? "";
+            string apiKey = "63b5cc9831401c5eb7ed475b2eefda79";
             using var httpClient = new HttpClient();
 
             var searchUrlES = $"https://api.themoviedb.org/3/search/tv?api_key={apiKey}&language=es-ES&query={Uri.EscapeDataString(titulo)}";
@@ -124,7 +124,7 @@ namespace SistemaGestionPeliculas.Server.Controllers
         [HttpGet("tmdb-detalle")]
         public async Task<IActionResult> ObtenerDetalleSerie([FromQuery] string titulo)
         {
-            string apiKey = _config["TMDb:ApiKey"] ?? "";
+            string apiKey = "63b5cc9831401c5eb7ed475b2eefda79";
             using var httpClient = new HttpClient();
 
             var searchUrl = $"https://api.themoviedb.org/3/search/tv?api_key={apiKey}&language=es-ES&query={Uri.EscapeDataString(titulo)}";
