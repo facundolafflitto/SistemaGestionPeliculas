@@ -13,7 +13,6 @@
           "Microsoft.EntityFrameworkCore.Analyzers": "6.0.27",
           "Microsoft.EntityFrameworkCore.Design": "6.0.27",
           "Microsoft.EntityFrameworkCore.Sqlite": "6.0.27",
-          "Microsoft.EntityFrameworkCore.Tools": "9.0.7",
           "Newtonsoft.Json": "13.0.3",
           "SistemaGestionPeliculas_Data": "1.0.0",
           "SistemaGestionPeliculas_TransferObject": "1.0.0"
@@ -30,14 +29,7 @@
           }
         }
       },
-      "Humanizer.Core/2.8.26": {
-        "runtime": {
-          "lib/netstandard2.0/Humanizer.dll": {
-            "assemblyVersion": "2.8.0.0",
-            "fileVersion": "2.8.26.1919"
-          }
-        }
-      },
+      "Humanizer.Core/2.8.26": {},
       "Microsoft.AspNetCore.Authentication.JwtBearer/6.0.25": {
         "dependencies": {
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "6.10.0"
@@ -149,12 +141,6 @@
         "dependencies": {
           "Humanizer.Core": "2.8.26",
           "Microsoft.EntityFrameworkCore.Relational": "6.0.27"
-        },
-        "runtime": {
-          "lib/net6.0/Microsoft.EntityFrameworkCore.Design.dll": {
-            "assemblyVersion": "6.0.27.0",
-            "fileVersion": "6.0.2724.6609"
-          }
         }
       },
       "Microsoft.EntityFrameworkCore.Relational/6.0.27": {
@@ -200,7 +186,6 @@
           }
         }
       },
-      "Microsoft.EntityFrameworkCore.Tools/9.0.7": {},
       "Microsoft.Extensions.Caching.Abstractions/6.0.0": {
         "dependencies": {
           "Microsoft.Extensions.Primitives": "6.0.0"
@@ -808,13 +793,6 @@
       "sha512": "sha512-Yc66OLFHx7fY5vI1/q9F3FZNt+hdcUO1dhRQev9dffeFVn2v/AA2vGhh1NUpDHASA7iCS2DRkwCr/Y7LwI3fNQ==",
       "path": "microsoft.entityframeworkcore.sqlserver/6.0.27",
       "hashPath": "microsoft.entityframeworkcore.sqlserver.6.0.27.nupkg.sha512"
-    },
-    "Microsoft.EntityFrameworkCore.Tools/9.0.7": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-NyRRParn9vUQDkHDeWoPU1/+E+gcHTBQR4Nn5XZPxBE5t6CiXwzl3ag0a6Z2SfrGSPyDDVT39r2cz33ar2xsZg==",
-      "path": "microsoft.entityframeworkcore.tools/9.0.7",
-      "hashPath": "microsoft.entityframeworkcore.tools.9.0.7.nupkg.sha512"
     },
     "Microsoft.Extensions.Caching.Abstractions/6.0.0": {
       "type": "package",

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "UQ0TLdF/0mfg5WELYoNchIhCvZZTF0giS4F89U65PAZwQT/UXPMjYultK2gmZsX/vEiyipRWONHZYPzCqF6fag==",
+  "dgSpecHash": "qfz6jx00EuVIVNy1oHKZZo/1QAQLVrWAUOO9WINdPe5gn9txrdL0+hZ6Eo3dc2xRnEKcpsMwahDPisOAhv8Yqg==",
   "success": true,
   "projectFilePath": "C:\\Projectos\\SistemaGestionPeliculas\\SistemaGestionPeliculas.Server\\SistemaGestionPeliculas.Server.csproj",
   "expectedPackageFiles": [
@@ -19,6 +19,7 @@
     "C:\\Users\\Facundo\\.nuget\\packages\\microsoft.entityframeworkcore.sqlite\\6.0.27\\microsoft.entityframeworkcore.sqlite.6.0.27.nupkg.sha512",
     "C:\\Users\\Facundo\\.nuget\\packages\\microsoft.entityframeworkcore.sqlite.core\\6.0.27\\microsoft.entityframeworkcore.sqlite.core.6.0.27.nupkg.sha512",
     "C:\\Users\\Facundo\\.nuget\\packages\\microsoft.entityframeworkcore.sqlserver\\6.0.27\\microsoft.entityframeworkcore.sqlserver.6.0.27.nupkg.sha512",
+    "C:\\Users\\Facundo\\.nuget\\packages\\microsoft.entityframeworkcore.tools\\9.0.7\\microsoft.entityframeworkcore.tools.9.0.7.nupkg.sha512",
     "C:\\Users\\Facundo\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\6.0.0\\microsoft.extensions.caching.abstractions.6.0.0.nupkg.sha512",
     "C:\\Users\\Facundo\\.nuget\\packages\\microsoft.extensions.caching.memory\\6.0.1\\microsoft.extensions.caching.memory.6.0.1.nupkg.sha512",
     "C:\\Users\\Facundo\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\6.0.0\\microsoft.extensions.configuration.abstractions.6.0.0.nupkg.sha512",

@@ -23,7 +23,7 @@ public AuthController(IConfiguration config, PeliculasContext context)
     _context = context;
 }
 
-        // ✅ LOGIN
+        //LOGIN
         [HttpPost("login")]
         [AllowAnonymous] // 👈 ESTO HABILITA LA PRE-FLIGHT (CORS)
         public IActionResult Login([FromBody] LoginRequest login)
@@ -60,7 +60,7 @@ public AuthController(IConfiguration config, PeliculasContext context)
             });
         }
 
-        // ✅ REGISTRO
+        //REGISTRO
         [HttpPost("register")]
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] RegisterRequest model)

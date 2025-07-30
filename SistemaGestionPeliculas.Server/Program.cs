@@ -36,7 +36,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 //Configuración de EF Core con SQLite
 builder.Services.AddDbContext<PeliculasContext>(options =>
-    options.UseSqlite("Data Source=peliculas.db"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 // 🔧 Servicios y controladores
 builder.Services.AddControllers();

@@ -11,7 +11,6 @@ namespace SistemaGestionPeliculas.Server.Data
         {
             context.Database.Migrate();
 
-            // agrega películas si no hay ninguna
             if (!context.Peliculas.Any())
             {
                 context.Peliculas.AddRange(
