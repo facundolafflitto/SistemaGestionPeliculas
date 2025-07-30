@@ -8,7 +8,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔐Config desde variables de entorno
+// 🔐 Configuración desde variables de entorno
 var jwtKey = builder.Configuration["Jwt:Key"];
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
 var jwtAudience = builder.Configuration["Jwt:Audience"];
@@ -19,6 +19,7 @@ if (string.IsNullOrEmpty(jwtKey) || string.IsNullOrEmpty(jwtIssuer) || string.Is
     throw new InvalidOperationException("Faltan variables de entorno para JWT");
 }
 
+// Autenticación JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -34,26 +35,26 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-//Configuración de EF Core con SQLite
+// Configuración de EF Core con SQL Server
 builder.Services.AddDbContext<PeliculasContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
-// 🔧 Servicios y controladores
+// Servicios y controladores
 builder.Services.AddControllers();
 
-//CORS
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy.WithOrigins(
             "https://sistema-gestion-peliculas.vercel.app",
+            "https://sistema-gestion-peliculas-tm0oydq53-facundos-projects-26cddd25.vercel.app",
             "http://localhost:5173"
         )
         .AllowAnyHeader()
         .AllowAnyMethod();
-        // Si usás cookies, también agregar: .AllowCredentials();
+        // Si usás cookies o tokens en cookie: .AllowCredentials();
     });
 });
 
