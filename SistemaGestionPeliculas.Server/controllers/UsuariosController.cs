@@ -15,6 +15,8 @@ namespace SistemaGestionPeliculas.Controllers
             _context = context;
         }
 
+        // --------- FAVORITAS DE PELÍCULAS ---------
+
         // Ver películas favoritas
         [HttpGet("{id}/favoritas")]
         public async Task<IActionResult> GetFavoritas(int id)
@@ -69,6 +71,60 @@ namespace SistemaGestionPeliculas.Controllers
             return Ok(usuario.Favoritas);
         }
 
-        // Lo mismo para SeriesFavoritas, si querés :)
+        // --------- FAVORITAS DE SERIES ---------
+
+        // Ver series favoritas
+        [HttpGet("{id}/seriesfavoritas")]
+        public async Task<IActionResult> GetSeriesFavoritas(int id)
+        {
+            var usuario = await _context.Usuarios
+                .Include(u => u.SeriesFavoritas)
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (usuario == null)
+                return NotFound();
+
+            return Ok(usuario.SeriesFavoritas);
+        }
+
+        // Agregar serie a favoritas
+        [HttpPost("{id}/seriesfavoritas/{serieId}")]
+        public async Task<IActionResult> AgregarSerieFavorita(int id, int serieId)
+        {
+            var usuario = await _context.Usuarios
+                .Include(u => u.SeriesFavoritas)
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            var serie = await _context.Series.FindAsync(serieId);
+
+            if (usuario == null || serie == null)
+                return NotFound();
+
+            if (!usuario.SeriesFavoritas.Any(s => s.Id == serieId))
+                usuario.SeriesFavoritas.Add(serie);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(usuario.SeriesFavoritas);
+        }
+
+        // Quitar serie de favoritas
+        [HttpDelete("{id}/seriesfavoritas/{serieId}")]
+        public async Task<IActionResult> EliminarSerieFavorita(int id, int serieId)
+        {
+            var usuario = await _context.Usuarios
+                .Include(u => u.SeriesFavoritas)
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            var serie = await _context.Series.FindAsync(serieId);
+
+            if (usuario == null || serie == null)
+                return NotFound();
+
+            usuario.SeriesFavoritas.Remove(serie);
+            await _context.SaveChangesAsync();
+
+            return Ok(usuario.SeriesFavoritas);
+        }
     }
 }
