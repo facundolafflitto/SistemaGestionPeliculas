@@ -20,6 +20,11 @@ const Peliculas = ({ onLogout }) => {
   const [erroresFormulario, setErroresFormulario] = useState("");
   const [filtroGenero, setFiltroGenero] = useState("");
 
+  // ---- FAVORITAS ----
+  const [favoritas, setFavoritas] = useState([]);
+  const userId = localStorage.getItem("userId");
+  // -------------------
+
   const apiUrl = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token");
   const rol = localStorage.getItem("rol") || "";
@@ -41,9 +46,39 @@ const Peliculas = ({ onLogout }) => {
       .finally(() => setCargando(false));
   };
 
+  // ---- TRAER FAVORITAS DEL USUARIO ----
+  const fetchFavoritas = () => {
+    if (!userId) return;
+    fetch(`${apiUrl}/api/usuarios/${userId}/favoritas`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(setFavoritas)
+      .catch(console.error);
+  };
+
   useEffect(() => {
     fetchPeliculas();
+    fetchFavoritas();
   }, []);
+  // --------------------------------------
+
+  // AGREGAR O QUITAR FAVORITA
+  const toggleFavorita = (peliculaId) => {
+    if (!userId) return;
+    const esFavorita = favoritas.some(p => p.id === peliculaId);
+    const method = esFavorita ? "DELETE" : "POST";
+    fetch(`${apiUrl}/api/usuarios/${userId}/favoritas/${peliculaId}`, {
+      method,
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => {
+        if (!res.ok) throw new Error("Error en favoritas");
+        return res.json();
+      })
+      .then(setFavoritas)
+      .catch(console.error);
+  };
 
   const eliminarPelicula = (id) => {
     if (!window.confirm("¿Eliminar esta película?")) return;
@@ -54,6 +89,7 @@ const Peliculas = ({ onLogout }) => {
       .then(res => {
         if (!res.ok) throw new Error("No se pudo eliminar");
         fetchPeliculas();
+        fetchFavoritas(); // refresca favoritas si eliminan una
       })
       .catch(err => {
         console.error(err);
@@ -116,6 +152,7 @@ const Peliculas = ({ onLogout }) => {
       })
       .then(() => {
         fetchPeliculas();
+        fetchFavoritas(); // refresca favoritas si cambia algo
         cancelarEdicion();
         setErroresFormulario("");
       })
@@ -223,6 +260,8 @@ const Peliculas = ({ onLogout }) => {
                   onDelete={eliminarPelicula}
                   onEdit={iniciarEdicion}
                   esAdmin={esAdmin}
+                  esFavorita={favoritas.some(f => f.id === p.id)}
+                  onToggleFavorita={() => toggleFavorita(p.id)}
                 />
               </motion.div>
             ))}

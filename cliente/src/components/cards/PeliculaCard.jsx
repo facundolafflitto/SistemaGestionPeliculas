@@ -1,7 +1,14 @@
 import React from "react";
 
-const PeliculaCard = ({ pelicula, onEdit, onDelete, esAdmin }) => (
-  <div className="bg-white dark:bg-gray-800 rounded shadow hover:shadow-lg transition p-4 border border-gray-200 dark:border-gray-700">
+const PeliculaCard = ({
+  pelicula,
+  onEdit,
+  onDelete,
+  esAdmin,
+  esFavorita,
+  onToggleFavorita
+}) => (
+  <div className="bg-white dark:bg-gray-800 rounded shadow hover:shadow-lg transition p-4 border border-gray-200 dark:border-gray-700 relative">
     <img
       src={pelicula.imagenUrl}
       alt={pelicula.titulo}
@@ -16,8 +23,22 @@ const PeliculaCard = ({ pelicula, onEdit, onDelete, esAdmin }) => (
     <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
       {pelicula.año}
     </p>
+    {/* Botón de favorito (aparece para todos los usuarios) */}
+    {onToggleFavorita && (
+      <button
+        className="absolute top-2 right-2 text-2xl"
+        onClick={e => {
+          e.stopPropagation();
+          onToggleFavorita();
+        }}
+        title={esFavorita ? "Quitar de favoritas" : "Agregar a favoritas"}
+        aria-label="Favorita"
+      >
+        {esFavorita ? "❤️" : "🤍"}
+      </button>
+    )}
     {esAdmin && (
-      <div className="flex justify-between">
+      <div className="flex justify-between mt-2">
         <button
           onClick={() => onEdit(pelicula)}
           className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
