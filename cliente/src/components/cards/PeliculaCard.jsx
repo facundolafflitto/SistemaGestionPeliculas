@@ -27,20 +27,21 @@ const PeliculaCard = ({
     <p className="text-sm text-gray-600 dark:text-gray-300">{pelicula.genero}</p>
     <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">{pelicula.año}</p>
     {/* Botón de favorito */}
-    {onToggleFavorita && (
-      <button
-        className="absolute top-2 right-2 text-2xl z-10"
-        onClick={e => {
-          e.stopPropagation();
-          onToggleFavorita();
-        }}
-        title={esFavorita ? "Quitar de favoritas" : "Agregar a favoritas"}
-        aria-label="Favorita"
-        style={{ background: "none", border: "none" }}
-      >
-        {esFavorita ? "❤️" : "🤍"}
-      </button>
-    )}
+{onToggleFavorita && (
+  <button
+    className="absolute top-2 right-2 text-2xl z-50 cursor-pointer"
+    onClick={e => {
+      e.stopPropagation();
+      e.preventDefault();
+      onToggleFavorita();
+    }}
+    title={esFavorita ? "Quitar de favoritas" : "Agregar a favoritas"}
+    aria-label="Favorita"
+    style={{ background: "none", border: "none" }}
+  >
+    {esFavorita ? "❤️" : "🤍"}
+  </button>
+)}
     {esAdmin && (
       <div className="flex justify-between mt-2">
         <button
