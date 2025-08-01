@@ -268,28 +268,29 @@ const Series = ({ onLogout }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           <AnimatePresence>
             {seriesFiltradas.map((s, i) => (
-              <motion.div
-                key={s.id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 30 }}
-                transition={{ duration: 0.38, delay: i * 0.06 }}
-                whileHover={{
-                  scale: 1.04,
-                  boxShadow: "0 8px 32px rgba(80,80,160,0.18)"
-                }}
-                className="rounded shadow bg-gray-800 dark:bg-gray-800 cursor-pointer"
-                onClick={() => setSerieDetalle(s)}
-              >
-                <PeliculaCard
-                  pelicula={s}
-                  onEdit={iniciarEdicion}
-                  onDelete={eliminarSerie}
-                  esAdmin={esAdmin}
-                  esFavorita={favoritas.some(f => f.id === s.id)}
-                  onToggleFavorita={() => toggleFavorita(s.id)}
-                />
-              </motion.div>
+<motion.div
+  key={s.id}
+  initial={{ opacity: 0, y: 30 }}
+  animate={{ opacity: 1, y: 0 }}
+  exit={{ opacity: 0, y: 30 }}
+  transition={{ duration: 0.38, delay: i * 0.06 }}
+  whileHover={{
+    scale: 1.04,
+    boxShadow: "0 8px 32px rgba(80,80,160,0.18)"
+  }}
+  className="rounded shadow bg-gray-800 dark:bg-gray-800 cursor-pointer"
+>
+  <PeliculaCard
+    pelicula={s}
+    onEdit={iniciarEdicion}
+    onDelete={eliminarSerie}
+    esAdmin={esAdmin}
+    esFavorita={favoritas.some(f => f.id === s.id)}
+    onToggleFavorita={() => toggleFavorita(s.id)}
+    onVerDetalle={() => setSerieDetalle(s)} {/* PASA ESTA PROP */}
+  />
+</motion.div>
+
             ))}
           </AnimatePresence>
         </div>
