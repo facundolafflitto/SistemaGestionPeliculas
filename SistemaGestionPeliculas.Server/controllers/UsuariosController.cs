@@ -39,11 +39,16 @@ namespace SistemaGestionPeliculas.Controllers
                 .Include(u => u.Favoritas)
                 .FirstOrDefaultAsync(u => u.Id == id);
 
-            var pelicula = await _context.Peliculas.FindAsync(peliculaId);
-
-            if (usuario == null || pelicula == null)
+            if (usuario == null)
                 return NotFound();
 
+            var pelicula = await _context.Peliculas
+                .FirstOrDefaultAsync(p => p.Id == peliculaId);
+
+            if (pelicula == null)
+                return NotFound();
+
+            // IMPORTANTE: siempre usar FirstOrDefaultAsync para tracking correcto
             if (!usuario.Favoritas.Any(p => p.Id == peliculaId))
                 usuario.Favoritas.Add(pelicula);
 
@@ -60,9 +65,13 @@ namespace SistemaGestionPeliculas.Controllers
                 .Include(u => u.Favoritas)
                 .FirstOrDefaultAsync(u => u.Id == id);
 
-            var pelicula = await _context.Peliculas.FindAsync(peliculaId);
+            if (usuario == null)
+                return NotFound();
 
-            if (usuario == null || pelicula == null)
+            var pelicula = await _context.Peliculas
+                .FirstOrDefaultAsync(p => p.Id == peliculaId);
+
+            if (pelicula == null)
                 return NotFound();
 
             usuario.Favoritas.Remove(pelicula);
@@ -95,9 +104,13 @@ namespace SistemaGestionPeliculas.Controllers
                 .Include(u => u.SeriesFavoritas)
                 .FirstOrDefaultAsync(u => u.Id == id);
 
-            var serie = await _context.Series.FindAsync(serieId);
+            if (usuario == null)
+                return NotFound();
 
-            if (usuario == null || serie == null)
+            var serie = await _context.Series
+                .FirstOrDefaultAsync(s => s.Id == serieId);
+
+            if (serie == null)
                 return NotFound();
 
             if (!usuario.SeriesFavoritas.Any(s => s.Id == serieId))
@@ -116,9 +129,13 @@ namespace SistemaGestionPeliculas.Controllers
                 .Include(u => u.SeriesFavoritas)
                 .FirstOrDefaultAsync(u => u.Id == id);
 
-            var serie = await _context.Series.FindAsync(serieId);
+            if (usuario == null)
+                return NotFound();
 
-            if (usuario == null || serie == null)
+            var serie = await _context.Series
+                .FirstOrDefaultAsync(s => s.Id == serieId);
+
+            if (serie == null)
                 return NotFound();
 
             usuario.SeriesFavoritas.Remove(serie);

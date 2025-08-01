@@ -22,7 +22,6 @@ const Series = ({ onLogout }) => {
   const [erroresFormulario, setErroresFormulario] = useState("");
   const [filtroGenero, setFiltroGenero] = useState("");
 
-  // --------- FAVORITAS ---------
   const [favoritas, setFavoritas] = useState([]);
   const userId = localStorage.getItem("userId");
   // -----------------------------
@@ -36,7 +35,6 @@ const Series = ({ onLogout }) => {
     fetchFavoritas();
   }, []);
 
-  // Traer series
   const fetchSeries = () => {
     fetch(`${API_URL}/api/series`, {
       headers: { Authorization: `Bearer ${token}` }
