@@ -243,27 +243,28 @@ const Peliculas = ({ onLogout }) => {
       {cargando ? (
         <p className="text-center">Cargando...</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 overflow-visible">
           <AnimatePresence>
             {peliculasFiltradas.map((p, i) => (
-<motion.div
-  key={p.id}
-  initial={{ opacity: 0, y: 30 }}
-  animate={{ opacity: 1, y: 0 }}
-  exit={{ opacity: 0, y: 30 }}
-  transition={{ duration: 0.3, delay: i * 0.05 }}
-  whileHover={{ scale: 1.05 }}
->
-  <PeliculaCard
-    pelicula={p}
-    onDelete={eliminarPelicula}
-    onEdit={iniciarEdicion}
-    esAdmin={esAdmin}
-    esFavorita={favoritas.some(f => f.id === p.id)}
-    onToggleFavorita={() => toggleFavorita(p.id)}
-    onVerDetalle={() => setPeliculaDetalle(p)}  {/* AGREGÁ ESTA PROP */}
-  />
-</motion.div>
+              <motion.div
+                key={p.id}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 30 }}
+                transition={{ duration: 0.3, delay: i * 0.05 }}
+                whileHover={{ scale: 1.05 }}
+                className="relative isolate overflow-visible"
+              >
+                <PeliculaCard
+                  pelicula={p}
+                  onDelete={eliminarPelicula}
+                  onEdit={iniciarEdicion}
+                  esAdmin={esAdmin}
+                  esFavorita={favoritas.some(f => f.id === p.id)}
+                  onToggleFavorita={() => toggleFavorita(p.id)}
+                  onVerDetalle={() => setPeliculaDetalle(p)}
+                />
+              </motion.div>
             ))}
           </AnimatePresence>
         </div>

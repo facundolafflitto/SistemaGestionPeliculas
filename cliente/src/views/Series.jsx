@@ -24,7 +24,6 @@ const Series = ({ onLogout }) => {
 
   const [favoritas, setFavoritas] = useState([]);
   const userId = localStorage.getItem("userId");
-  // -----------------------------
 
   const token = localStorage.getItem("token");
   const rol = localStorage.getItem("rol") || "";
@@ -57,7 +56,7 @@ const Series = ({ onLogout }) => {
     fetch(`${API_URL}/api/usuarios/${userId}/seriesfavoritas`, {
       headers: { Authorization: `Bearer ${token}` }
     })
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(setFavoritas)
       .catch(console.error);
   };
@@ -65,13 +64,13 @@ const Series = ({ onLogout }) => {
   // Toggle favorita
   const toggleFavorita = (serieId) => {
     if (!userId) return;
-    const esFavorita = favoritas.some(s => s.id === serieId);
+    const esFavorita = favoritas.some((s) => s.id === serieId);
     const method = esFavorita ? "DELETE" : "POST";
     fetch(`${API_URL}/api/usuarios/${userId}/seriesfavoritas/${serieId}`, {
       method,
       headers: { Authorization: `Bearer ${token}` }
     })
-      .then(res => {
+      .then((res) => {
         if (!res.ok) throw new Error("Error en favoritas");
         return res.json();
       })
@@ -88,7 +87,7 @@ const Series = ({ onLogout }) => {
       .then((res) => {
         if (!res.ok) throw new Error("No se pudo eliminar la serie");
         fetchSeries();
-        fetchFavoritas(); // refresca favoritas si eliminan una
+        fetchFavoritas();
       })
       .catch((err) => {
         console.error(err);
@@ -153,7 +152,7 @@ const Series = ({ onLogout }) => {
       })
       .then(() => {
         fetchSeries();
-        fetchFavoritas(); // refresca favoritas si cambia algo
+        fetchFavoritas();
         cancelarEdicion();
       })
       .catch((err) => {
@@ -180,40 +179,39 @@ const Series = ({ onLogout }) => {
   }, []);
 
   const mapaGeneros = {
-    "Action": "Acción",
-    "Drama": "Drama",
-    "Comedy": "Comedia",
-    "Thriller": "Suspenso",
-    "Horror": "Terror",
-    "Romance": "Romance",
-    "Adventure": "Aventura",
+    Action: "Acción",
+    Drama: "Drama",
+    Comedy: "Comedia",
+    Thriller: "Suspenso",
+    Horror: "Terror",
+    Romance: "Romance",
+    Adventure: "Aventura",
     "Sci-Fi": "Ciencia ficción",
-    "Fantasy": "Fantasía",
-    "Documentary": "Documental",
-    "Crime": "Crimen",
-    "Mystery": "Misterio",
-    "Animation": "Animación"
+    Fantasy: "Fantasía",
+    Documentary: "Documental",
+    Crime: "Crimen",
+    Mystery: "Misterio",
+    Animation: "Animación"
   };
 
   const generosUnicos = [
     ...new Set(
-      series.flatMap(s =>
+      series.flatMap((s) =>
         s.genero
-          ? s.genero.split(",").map(g => mapaGeneros[g.trim()] || g.trim())
+          ? s.genero.split(",").map((g) => mapaGeneros[g.trim()] || g.trim())
           : []
       )
     )
-  ].filter(g => g);
+  ].filter((g) => g);
 
   const seriesFiltradas = series.filter((s) => {
     const generosDeSerie = s.genero
-      ? s.genero.split(",").map(g => mapaGeneros[g.trim()] || g.trim())
+      ? s.genero.split(",").map((g) => mapaGeneros[g.trim()] || g.trim())
       : [];
-    const generoMatch = filtroGenero === "" || generosDeSerie.includes(filtroGenero);
+    const generoMatch =
+      filtroGenero === "" || generosDeSerie.includes(filtroGenero);
 
-    return (
-      s.titulo.toLowerCase().includes(busqueda.toLowerCase()) && generoMatch
-    );
+    return s.titulo.toLowerCase().includes(busqueda.toLowerCase()) && generoMatch;
   });
 
   return (
@@ -265,32 +263,31 @@ const Series = ({ onLogout }) => {
       {cargando ? (
         <p className="text-center text-gray-500">Cargando...</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 overflow-visible">
           <AnimatePresence>
             {seriesFiltradas.map((s, i) => (
-<motion.div
-  key={s.id}
-  initial={{ opacity: 0, y: 30 }}
-  animate={{ opacity: 1, y: 0 }}
-  exit={{ opacity: 0, y: 30 }}
-  transition={{ duration: 0.38, delay: i * 0.06 }}
-  whileHover={{
-    scale: 1.04,
-    boxShadow: "0 8px 32px rgba(80,80,160,0.18)"
-  }}
-  className="rounded shadow bg-gray-800 dark:bg-gray-800 cursor-pointer"
->
-  <PeliculaCard
-    pelicula={s}
-    onEdit={iniciarEdicion}
-    onDelete={eliminarSerie}
-    esAdmin={esAdmin}
-    esFavorita={favoritas.some(f => f.id === s.id)}
-    onToggleFavorita={() => toggleFavorita(s.id)}
-    onVerDetalle={() => setSerieDetalle(s)} {/* PASA ESTA PROP */}
-  />
-</motion.div>
-
+              <motion.div
+                key={s.id}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 30 }}
+                transition={{ duration: 0.38, delay: i * 0.06 }}
+                whileHover={{
+                  scale: 1.04,
+                  boxShadow: "0 8px 32px rgba(80,80,160,0.18)"
+                }}
+                className="relative isolate overflow-visible rounded shadow bg-gray-800 dark:bg-gray-800 cursor-pointer"
+              >
+                <PeliculaCard
+                  pelicula={s}
+                  onEdit={iniciarEdicion}
+                  onDelete={eliminarSerie}
+                  esAdmin={esAdmin}
+                  esFavorita={favoritas.some((f) => f.id === s.id)}
+                  onToggleFavorita={() => toggleFavorita(s.id)}
+                  onVerDetalle={() => setSerieDetalle(s)}
+                />
+              </motion.div>
             ))}
           </AnimatePresence>
         </div>
