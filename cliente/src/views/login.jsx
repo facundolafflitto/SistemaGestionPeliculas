@@ -10,6 +10,7 @@ const Login = ({ onLoginSuccess }) => {
 
   const handleLogin = (e) => {
     e.preventDefault();
+    setError("");
 
     fetch(`${apiUrl}/api/auth/login`, {
       method: "POST",
@@ -21,22 +22,48 @@ const Login = ({ onLoginSuccess }) => {
           const msg = await res.text();
           throw new Error(msg || "Error al iniciar sesión");
         }
-        return res.json();
+        return res.json(); // { token, userId, rol }
       })
       .then((data) => {
+        // Guardar token
         localStorage.setItem("token", data.token);
-        const decoded = jwtDecode(data.token);
 
-        const rol =
-          decoded["role"] ||
-          decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] ||
-          "";
-
+        // Guardar rol (desde respuesta o desde el token como fallback)
+        let rol = data.rol || "";
+        try {
+          const decoded = jwtDecode(data.token);
+          rol =
+            rol ||
+            decoded["role"] ||
+            decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] ||
+            "";
+        } catch { /* ignore decode errors */ }
         localStorage.setItem("rol", rol);
+
+        // Guardar userId (primero lo que manda el backend; si no, lo leo del token)
+        let userId = data.userId;
+        if (!userId) {
+          try {
+            const decoded = jwtDecode(data.token);
+            userId =
+              decoded.userId ||
+              decoded.sub ||
+              decoded["UserId"] ||
+              decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+          } catch { /* ignore decode errors */ }
+        }
+
+        if (!userId) {
+          // Si por algún motivo no pudimos obtenerlo, avisamos y no seguimos
+          throw new Error("No se pudo obtener el userId. Contactá al admin.");
+        }
+
+        localStorage.setItem("userId", String(userId));
+
         onLoginSuccess();
       })
       .catch((err) => {
-        setError(err.message);
+        setError(err.message || "Error de autenticación");
       });
   };
 
@@ -45,7 +72,13 @@ const Login = ({ onLoginSuccess }) => {
       <h2 className="text-2xl font-bold mb-4 text-center text-gray-800 dark:text-gray-100">
         Iniciar Sesión
       </h2>
-      {error && <p className="text-red-500 mb-3 text-center">{error}</p>}
+
+      {error && (
+        <p className="text-red-500 mb-3 text-center whitespace-pre-line">
+          {error}
+        </p>
+      )}
+
       <form onSubmit={handleLogin}>
         <input
           type="email"
@@ -54,7 +87,9 @@ const Login = ({ onLoginSuccess }) => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          autoComplete="email"
         />
+
         <input
           type="password"
           placeholder="Contraseña"
@@ -62,7 +97,9 @@ const Login = ({ onLoginSuccess }) => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          autoComplete="current-password"
         />
+
         <button
           type="submit"
           className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"

@@ -5,7 +5,7 @@ using System.Security.Claims;
 using System.Text;
 using SistemaGestionPeliculas.TransferObject.Models;
 using SistemaGestionPeliculas_Data;
-using Microsoft.AspNetCore.Authorization; // 👈 Asegurate de tener esto
+using Microsoft.AspNetCore.Authorization;
 
 namespace SistemaGestionPeliculas.Server.Controllers
 {
@@ -16,16 +16,16 @@ namespace SistemaGestionPeliculas.Server.Controllers
         private readonly IConfiguration _config;
         private readonly PeliculasContext _context;
 
-public AuthController(IConfiguration config, PeliculasContext context)
-{
-    Console.WriteLine("==== AuthController CARGADO ====");
-    _config = config;
-    _context = context;
-}
+        public AuthController(IConfiguration config, PeliculasContext context)
+        {
+            Console.WriteLine("==== AuthController CARGADO ====");
+            _config = config;
+            _context = context;
+        }
 
-        //LOGIN
+        // LOGIN
         [HttpPost("login")]
-        [AllowAnonymous] // 👈 ESTO HABILITA LA PRE-FLIGHT (CORS)
+        [AllowAnonymous]
         public IActionResult Login([FromBody] LoginRequest login)
         {
             var usuarioDb = _context.Usuarios.FirstOrDefault(u => u.Email == login.Email);
@@ -36,11 +36,14 @@ public AuthController(IConfiguration config, PeliculasContext context)
             if (!BCrypt.Net.BCrypt.Verify(login.Password, usuarioDb.PasswordHash))
                 return Unauthorized("Contraseña incorrecta");
 
+            // Claims
             var claims = new[]
             {
                 new Claim(ClaimTypes.Name, usuarioDb.Email),
-                new Claim("UserId", usuarioDb.Id.ToString()),
-                new Claim(ClaimTypes.Role, usuarioDb.Rol)
+                new Claim(ClaimTypes.Role, usuarioDb.Rol),
+                // Claims estándar para ID
+                new Claim(JwtRegisteredClaimNames.Sub, usuarioDb.Id.ToString()),
+                new Claim("userId", usuarioDb.Id.ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
@@ -54,13 +57,18 @@ public AuthController(IConfiguration config, PeliculasContext context)
                 signingCredentials: creds
             );
 
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+            // Devolver token + datos extra
             return Ok(new
             {
-                token = new JwtSecurityTokenHandler().WriteToken(token)
+                token = tokenString,
+                userId = usuarioDb.Id,
+                rol = usuarioDb.Rol
             });
         }
 
-        //REGISTRO
+        // REGISTRO
         [HttpPost("register")]
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] RegisterRequest model)
@@ -82,13 +90,11 @@ public AuthController(IConfiguration config, PeliculasContext context)
         }
 
         [HttpGet("ping")]
-public IActionResult Ping()
-{
-    return Ok("pong");
-}
+        public IActionResult Ping()
+        {
+            return Ok("pong");
+        }
     }
-
-    
 
     // DTOs
     public class LoginRequest
