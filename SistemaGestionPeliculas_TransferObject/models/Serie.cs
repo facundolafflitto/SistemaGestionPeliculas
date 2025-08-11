@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace SistemaGestionPeliculas.TransferObject.Models
 {
     public class Serie
@@ -8,6 +10,7 @@ namespace SistemaGestionPeliculas.TransferObject.Models
         public int Año { get; set; }
         public string ImagenUrl { get; set; } = string.Empty;
 
+        [JsonIgnore] // evita ciclo Usuario ↔ Serie
         public List<Usuario> UsuariosFavoritos { get; set; } = new List<Usuario>();
     }
 }

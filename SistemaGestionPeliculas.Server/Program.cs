@@ -5,6 +5,10 @@ using SistemaGestionPeliculas_Data;
 using SistemaGestionPeliculas.Server.Data;
 using System.Text;
 
+// 👇 agrega estos usings para las opciones JSON
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // ===== JWT =====
@@ -33,10 +37,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddDbContext<PeliculasContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddControllers();
+// ===== Controllers + JSON (evita ciclos y usa camelCase) =====
+builder.Services.AddControllers()
+    .AddJsonOptions(o =>
+    {
+        o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; // evita 500 por ciclos
+        o.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase; // Id -> id
+    });
 
 // ===== CORS (prod) =====
-// Permite tu dominio de Vercel y localhost. Si usás previews, habilitá el SetIsOriginAllowed de abajo.
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -54,6 +63,7 @@ builder.Services.AddCors(options =>
             })
             .AllowAnyHeader()
             .AllowAnyMethod();
+        // sin AllowCredentials porque usás Bearer (no cookies)
     });
 });
 
@@ -68,6 +78,9 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = scope.ServiceProvider.GetRequiredService<PeliculasContext>();
+        // Si querés asegurarte schema OK:
+        // context.Database.Migrate();
+
         DbSeeder.SeedPeliculas(context);
         DbSeeder.SetUsuarioAdmin(context, "herber7748@hotmail.com");
     }
@@ -81,8 +94,9 @@ using (var scope = app.Services.CreateScope())
 // ===== ORDEN DE MIDDLEWARES (clave) =====
 app.UseHttpsRedirection();
 
-// CORS SIEMPRE antes de Auth y antes de MapControllers
-app.UseCors("AllowFrontend");
+app.UseRouting();                // 👈 agregá esto
+
+app.UseCors("AllowFrontend");    // 👈 CORS antes de Auth y de MapControllers
 
 app.UseAuthentication();
 app.UseAuthorization();
