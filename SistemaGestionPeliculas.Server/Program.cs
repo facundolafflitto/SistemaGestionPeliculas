@@ -1,29 +1,24 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 using SistemaGestionPeliculas_Data;
 using SistemaGestionPeliculas.Server.Data;
-using SistemaGestionPeliculas.TransferObject.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔐 Configuración desde variables de entorno
+// JWT
 var jwtKey = builder.Configuration["Jwt:Key"];
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
 var jwtAudience = builder.Configuration["Jwt:Audience"];
-
 if (string.IsNullOrEmpty(jwtKey) || string.IsNullOrEmpty(jwtIssuer) || string.IsNullOrEmpty(jwtAudience))
-{
-    Console.WriteLine("=== Faltan variables de entorno para JWT ===");
     throw new InvalidOperationException("Faltan variables de entorno para JWT");
-}
 
-// Autenticación JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+    .AddJwtBearer(o =>
     {
-        options.TokenValidationParameters = new TokenValidationParameters
+        o.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateAudience = true,
@@ -35,37 +30,55 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Configuración de EF Core con PostGreeSQL
-builder.Services.AddDbContext<PeliculasContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+// DB
+builder.Services.AddDbContext<PeliculasContext>(opt =>
+    opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Servicios y controladores
 builder.Services.AddControllers();
 
-// CORS
+// CORS (permití prod + localhost + cualquier preview de vercel.app)
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend", policy =>
+    options.AddPolicy("Frontend", policy =>
     {
-        policy.WithOrigins(
-            "https://sistema-gestion-peliculas.vercel.app",
-            "https://sistema-gestion-peliculas-tm0oydq53-facundos-projects-26cddd25.vercel.app",
-            "https://sistema-gestion-peliculas-m0rpqptw1-facundos-projects-26cddd25.vercel.app", // ⬅️ Agrega este dominio
-            "http://localhost:5173"
-        )
-        .AllowAnyHeader()
-        .AllowAnyMethod();
+        policy
+            // Permite tu prod exacto
+            .WithOrigins("https://sistema-gestion-peliculas.vercel.app",
+                         "http://localhost:5173")
+            // Además, habilita **cualquier** subdominio *.vercel.app (para previews)
+            .SetIsOriginAllowed(origin =>
+            {
+                if (string.IsNullOrEmpty(origin)) return false;
+                try { return new Uri(origin).Host.EndsWith("vercel.app"); }
+                catch { return false; }
+            })
+            .WithMethods("GET","POST","PUT","DELETE","OPTIONS")
+            .WithHeaders(HeaderNames.Authorization, HeaderNames.ContentType, "X-Requested-With");
+            // .AllowCredentials(); // solo si usás cookies. Para Bearer NO hace falta.
     });
 });
 
-
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-Console.WriteLine($"Puerto asignado: {port}");
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 var app = builder.Build();
 
-// Seeding inicial de la base de datos
+// (Opcional pero recomendado)
+app.UseHttpsRedirection();
+
+// 👇 CORS SIEMPRE ANTES de Auth/Endpoints
+app.UseCors("Frontend");
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+// (Opcional) responder preflight si algo raro lo corta
+app.MapMethods("/api/{**any}", new[] { "OPTIONS" }, () => Results.NoContent());
+
+app.MapControllers();
+app.MapGet("/", () => "API funcionando 🚀");
+
+// Seed
 using (var scope = app.Services.CreateScope())
 {
     try
@@ -80,12 +93,5 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine(ex.ToString());
     }
 }
-
-// Middleware
-app.UseCors("AllowFrontend");
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapControllers();
-app.MapGet("/", () => "API funcionando 🚀");
 
 app.Run();
