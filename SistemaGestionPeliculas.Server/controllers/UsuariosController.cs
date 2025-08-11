@@ -58,27 +58,23 @@ namespace SistemaGestionPeliculas.Controllers
         }
 
         // Quitar película de favoritas
-        [HttpDelete("{id}/favoritas/{peliculaId}")]
-        public async Task<IActionResult> EliminarFavorita(int id, int peliculaId)
-        {
-            var usuario = await _context.Usuarios
-                .Include(u => u.Favoritas)
-                .FirstOrDefaultAsync(u => u.Id == id);
+[HttpDelete("{id}/favoritas/{peliculaId}")]
+public async Task<IActionResult> EliminarFavorita(int id, int peliculaId)
+{
+    var usuario = await _context.Usuarios
+        .Include(u => u.Favoritas)
+        .FirstOrDefaultAsync(u => u.Id == id);
+    if (usuario == null) return NotFound();
 
-            if (usuario == null)
-                return NotFound();
+    // Buscar la instancia dentro de la colección trackeada
+    var favorita = usuario.Favoritas.FirstOrDefault(p => p.Id == peliculaId);
+    if (favorita == null)
+        return NotFound(); // o NoContent() si preferís idempotencia
 
-            var pelicula = await _context.Peliculas
-                .FirstOrDefaultAsync(p => p.Id == peliculaId);
-
-            if (pelicula == null)
-                return NotFound();
-
-            usuario.Favoritas.Remove(pelicula);
-            await _context.SaveChangesAsync();
-
-            return Ok(usuario.Favoritas);
-        }
+    usuario.Favoritas.Remove(favorita);
+    await _context.SaveChangesAsync();
+    return Ok(usuario.Favoritas);
+}
 
         // --------- FAVORITAS DE SERIES ---------
 
@@ -122,26 +118,21 @@ namespace SistemaGestionPeliculas.Controllers
         }
 
         // Quitar serie de favoritas
-        [HttpDelete("{id}/seriesfavoritas/{serieId}")]
-        public async Task<IActionResult> EliminarSerieFavorita(int id, int serieId)
-        {
-            var usuario = await _context.Usuarios
-                .Include(u => u.SeriesFavoritas)
-                .FirstOrDefaultAsync(u => u.Id == id);
+[HttpDelete("{id}/seriesfavoritas/{serieId}")]
+public async Task<IActionResult> EliminarSerieFavorita(int id, int serieId)
+{
+    var usuario = await _context.Usuarios
+        .Include(u => u.SeriesFavoritas)
+        .FirstOrDefaultAsync(u => u.Id == id);
+    if (usuario == null) return NotFound();
 
-            if (usuario == null)
-                return NotFound();
+    var favorita = usuario.SeriesFavoritas.FirstOrDefault(s => s.Id == serieId);
+    if (favorita == null)
+        return NotFound();
 
-            var serie = await _context.Series
-                .FirstOrDefaultAsync(s => s.Id == serieId);
-
-            if (serie == null)
-                return NotFound();
-
-            usuario.SeriesFavoritas.Remove(serie);
-            await _context.SaveChangesAsync();
-
-            return Ok(usuario.SeriesFavoritas);
-        }
+    usuario.SeriesFavoritas.Remove(favorita);
+    await _context.SaveChangesAsync();
+    return Ok(usuario.SeriesFavoritas);
+}
     }
 }
