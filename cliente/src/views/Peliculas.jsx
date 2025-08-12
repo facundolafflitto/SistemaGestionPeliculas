@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import PeliculaCard from "../components/cards/PeliculaCard";
 import FormularioPelicula from "../components/forms/FormularioPelicula";
 import DetalleModal from "../components/modals/DetalleModal";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 const Peliculas = ({ onLogout }) => {
   const [peliculas, setPeliculas] = useState([]);
