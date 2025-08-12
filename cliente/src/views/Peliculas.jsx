@@ -60,6 +60,7 @@ const Peliculas = ({ onLogout }) => {
   useEffect(() => {
     fetchPeliculas();
     fetchFavoritas();
+    // el modo oscuro ahora lo maneja la navbar globalmente
   }, []);
   // --------------------------------------
 
@@ -162,19 +163,6 @@ const Peliculas = ({ onLogout }) => {
       });
   };
 
-  const toggleDarkMode = () => {
-    document.documentElement.classList.toggle("dark");
-    const isDark = document.documentElement.classList.contains("dark");
-    localStorage.setItem("modoOscuro", isDark ? "true" : "false");
-  };
-
-  useEffect(() => {
-    const preferencia = localStorage.getItem("modoOscuro");
-    if (preferencia === "true") {
-      document.documentElement.classList.add("dark");
-    }
-  }, []);
-
   const mapaGeneros = {
     Action: "Acción",
     Drama: "Drama",
@@ -219,12 +207,12 @@ const Peliculas = ({ onLogout }) => {
             placeholder="Buscar..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
-            className="p-2 border rounded dark:bg-gray-800"
+            className="p-2 border rounded bg-white dark:bg-gray-800"
           />
           <select
             value={filtroGenero}
             onChange={(e) => setFiltroGenero(e.target.value)}
-            className="p-2 border rounded dark:bg-gray-800"
+            className="p-2 border rounded bg-white dark:bg-gray-800"
           >
             <option value="">Todos los géneros</option>
             {generosUnicos.map(g => <option key={g}>{g}</option>)}
@@ -234,9 +222,7 @@ const Peliculas = ({ onLogout }) => {
               + Nueva Película
             </button>
           )}
-          <button onClick={toggleDarkMode} className="px-4 py-2 rounded bg-gray-800 text-white">
-            🌙/☀️
-          </button>
+          {/* 👇 sin botón de modo oscuro; lo maneja la navbar */}
         </div>
       </div>
 

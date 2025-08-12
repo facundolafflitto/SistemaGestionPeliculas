@@ -32,6 +32,7 @@ const Series = ({ onLogout }) => {
   useEffect(() => {
     fetchSeries();
     fetchFavoritas();
+    // el tema lo maneja la navbar globalmente
   }, []);
 
   const fetchSeries = () => {
@@ -50,27 +51,25 @@ const Series = ({ onLogout }) => {
       .finally(() => setCargando(false));
   };
 
-  // Traer favoritas del usuario
   const fetchFavoritas = () => {
     if (!userId) return;
     fetch(`${API_URL}/api/usuarios/${userId}/seriesfavoritas`, {
       headers: { Authorization: `Bearer ${token}` }
     })
-      .then((res) => res.json())
+      .then(res => res.json())
       .then(setFavoritas)
       .catch(console.error);
   };
 
-  // Toggle favorita
   const toggleFavorita = (serieId) => {
     if (!userId) return;
-    const esFavorita = favoritas.some((s) => s.id === serieId);
+    const esFavorita = favoritas.some(s => s.id === serieId);
     const method = esFavorita ? "DELETE" : "POST";
     fetch(`${API_URL}/api/usuarios/${userId}/seriesfavoritas/${serieId}`, {
       method,
       headers: { Authorization: `Bearer ${token}` }
     })
-      .then((res) => {
+      .then(res => {
         if (!res.ok) throw new Error("Error en favoritas");
         return res.json();
       })
@@ -126,10 +125,7 @@ const Series = ({ onLogout }) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify({
-        ...serie,
-        año: parseInt(serie.año)
-      })
+      body: JSON.stringify({ ...serie, año: parseInt(serie.año) })
     })
       .then(async (res) => {
         if (!res.ok) {
@@ -157,26 +153,10 @@ const Series = ({ onLogout }) => {
       })
       .catch((err) => {
         console.error(err);
-        if (err.message === "No autorizado") {
-          onLogout();
-        } else {
-          setErroresFormulario(err.message);
-        }
+        if (err.message === "No autorizado") onLogout();
+        else setErroresFormulario(err.message);
       });
   };
-
-  const toggleDarkMode = () => {
-    document.documentElement.classList.toggle("dark");
-    const isDark = document.documentElement.classList.contains("dark");
-    localStorage.setItem("modoOscuro", isDark ? "true" : "false");
-  };
-
-  useEffect(() => {
-    const preferencia = localStorage.getItem("modoOscuro");
-    if (preferencia === "true") {
-      document.documentElement.classList.add("dark");
-    }
-  }, []);
 
   const mapaGeneros = {
     Action: "Acción",
@@ -196,22 +176,23 @@ const Series = ({ onLogout }) => {
 
   const generosUnicos = [
     ...new Set(
-      series.flatMap((s) =>
+      series.flatMap(s =>
         s.genero
-          ? s.genero.split(",").map((g) => mapaGeneros[g.trim()] || g.trim())
+          ? s.genero.split(",").map(g => mapaGeneros[g.trim()] || g.trim())
           : []
       )
     )
-  ].filter((g) => g);
+  ].filter(g => g);
 
   const seriesFiltradas = series.filter((s) => {
     const generosDeSerie = s.genero
-      ? s.genero.split(",").map((g) => mapaGeneros[g.trim()] || g.trim())
+      ? s.genero.split(",").map(g => mapaGeneros[g.trim()] || g.trim())
       : [];
-    const generoMatch =
-      filtroGenero === "" || generosDeSerie.includes(filtroGenero);
+    const generoMatch = filtroGenero === "" || generosDeSerie.includes(filtroGenero);
 
-    return s.titulo.toLowerCase().includes(busqueda.toLowerCase()) && generoMatch;
+    return (
+      s.titulo.toLowerCase().includes(busqueda.toLowerCase()) && generoMatch
+    );
   });
 
   return (
@@ -250,12 +231,7 @@ const Series = ({ onLogout }) => {
               + Nueva Serie
             </button>
           )}
-          <button
-            onClick={toggleDarkMode}
-            className="px-4 py-2 bg-gray-800 text-white dark:bg-gray-200 dark:text-gray-900 rounded shadow hover:scale-105 transition"
-          >
-            🌙/☀️
-          </button>
+          {/* 👇 sin botón de modo oscuro; lo maneja la navbar */}
         </div>
       </div>
 
@@ -263,7 +239,7 @@ const Series = ({ onLogout }) => {
       {cargando ? (
         <p className="text-center text-gray-500">Cargando...</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 overflow-visible">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           <AnimatePresence>
             {seriesFiltradas.map((s, i) => (
               <motion.div
@@ -272,10 +248,7 @@ const Series = ({ onLogout }) => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 30 }}
                 transition={{ duration: 0.38, delay: i * 0.06 }}
-                whileHover={{
-                  scale: 1.04,
-                  boxShadow: "0 8px 32px rgba(80,80,160,0.18)"
-                }}
+                whileHover={{ scale: 1.04, boxShadow: "0 8px 32px rgba(80,80,160,0.18)" }}
                 className="relative isolate overflow-visible rounded shadow bg-gray-800 dark:bg-gray-800 cursor-pointer"
               >
                 <PeliculaCard
@@ -283,7 +256,7 @@ const Series = ({ onLogout }) => {
                   onEdit={iniciarEdicion}
                   onDelete={eliminarSerie}
                   esAdmin={esAdmin}
-                  esFavorita={favoritas.some((f) => f.id === s.id)}
+                  esFavorita={favoritas.some(f => f.id === s.id)}
                   onToggleFavorita={() => toggleFavorita(s.id)}
                   onVerDetalle={() => setSerieDetalle(s)}
                 />
