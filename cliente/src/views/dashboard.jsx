@@ -111,19 +111,27 @@ function Favorites({ title, items = [] }) {
       {items.length === 0 ? (
         <div className="text-sm text-gray-500 dark:text-gray-400">No tienes favoritos aún.</div>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+        // 👇 Más columnas → tarjetas más chicas (compacto)
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3">
           {items.map(x => (
             <div
               key={x.id}
-              className="rounded-lg overflow-hidden border bg-white dark:bg-gray-900/60
-                            border-gray-200 dark:border-white/10"
+              className="rounded-md overflow-hidden border bg-white dark:bg-gray-900/60
+                         border-gray-200 dark:border-white/10"
             >
+              {/* poster compacto */}
               <div className="aspect-[2/3] bg-gray-100 dark:bg-black">
-                <img src={x.imagenUrl} alt={x.titulo} className="w-full h-full object-cover" loading="lazy" />
+                <img
+                  src={x.imagenUrl}
+                  alt={x.titulo}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
               </div>
+              {/* textos compactos */}
               <div className="p-2">
-                <div className="text-sm font-medium truncate">{x.titulo}</div>
-                <div className="text-xs text-gray-600 dark:text-gray-400 truncate">
+                <div className="text-xs font-medium truncate">{x.titulo}</div>
+                <div className="text-[11px] text-gray-600 dark:text-gray-400 truncate">
                   {x.genero} · {x.año}
                 </div>
               </div>
