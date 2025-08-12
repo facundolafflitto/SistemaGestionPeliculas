@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import PeliculaCard from "../components/cards/PeliculaCard";
 import FormularioPelicula from "../components/forms/FormularioPelicula";
 import DetalleModalSerie from "../components/modals/DetalleModalSerie";
-import { motion as Motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
