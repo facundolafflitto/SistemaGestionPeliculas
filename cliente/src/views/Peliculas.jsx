@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import PeliculaCard from "../components/cards/PeliculaCard";
 import FormularioPelicula from "../components/forms/FormularioPelicula";
 import DetalleModal from "../components/modals/DetalleModal";
-import { motion } from "framer-motion";
+import { motion as Motion, AnimatePresence } from "framer-motion";
 
 const Peliculas = ({ onLogout }) => {
   const [peliculas, setPeliculas] = useState([]);
@@ -232,7 +232,7 @@ const Peliculas = ({ onLogout }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 overflow-visible">
           <AnimatePresence>
             {peliculasFiltradas.map((p, i) => (
-              <motion.div
+              <Motion.div
                 key={p.id}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -250,7 +250,7 @@ const Peliculas = ({ onLogout }) => {
                   onToggleFavorita={() => toggleFavorita(p.id)}
                   onVerDetalle={() => setPeliculaDetalle(p)}
                 />
-              </motion.div>
+              </Motion.div>
             ))}
           </AnimatePresence>
         </div>
@@ -262,13 +262,13 @@ const Peliculas = ({ onLogout }) => {
 
       <AnimatePresence>
         {modalAbierto && (
-          <motion.div
+          <Motion.div
             className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <motion.div
+            <Motion.div
               initial={{ scale: 0.92, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
@@ -289,8 +289,8 @@ const Peliculas = ({ onLogout }) => {
                 esEdicion={esEdicion}
                 errores={erroresFormulario}
               />
-            </motion.div>
-          </motion.div>
+            </Motion.div>
+          </Motion.div>
         )}
       </AnimatePresence>
     </div>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import PeliculaCard from "../components/cards/PeliculaCard";
 import FormularioPelicula from "../components/forms/FormularioPelicula";
 import DetalleModalSerie from "../components/modals/DetalleModalSerie";
-import { motion } from "framer-motion";
+import { motion as Motion, AnimatePresence } from "framer-motion";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -242,7 +242,7 @@ const Series = ({ onLogout }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           <AnimatePresence>
             {seriesFiltradas.map((s, i) => (
-              <motion.div
+              <Motion.div
                 key={s.id}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -260,7 +260,7 @@ const Series = ({ onLogout }) => {
                   onToggleFavorita={() => toggleFavorita(s.id)}
                   onVerDetalle={() => setSerieDetalle(s)}
                 />
-              </motion.div>
+              </Motion.div>
             ))}
           </AnimatePresence>
         </div>
@@ -274,13 +274,13 @@ const Series = ({ onLogout }) => {
       {/* Modal de formulario */}
       <AnimatePresence>
         {modalAbierto && (
-          <motion.div
+          <Motion.div
             className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <motion.div
+            <Motion.div
               initial={{ scale: 0.92, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
@@ -306,8 +306,8 @@ const Series = ({ onLogout }) => {
                 cancelarEdicion={cancelarEdicion}
                 esEdicion={esEdicion}
               />
-            </motion.div>
-          </motion.div>
+            </Motion.div>
+          </Motion.div>
         )}
       </AnimatePresence>
     </div>
